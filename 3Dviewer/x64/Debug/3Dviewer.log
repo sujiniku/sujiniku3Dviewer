@@ -1,0 +1,11 @@
+﻿  3Dviewer.cpp
+C:\Users\st\Desktop\試作の真3Dビューワー\3Dviewer\3Dviewer\3Dviewer.cpp(226,18): warning C4244:  '初期化中': 'double' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\st\Desktop\試作の真3Dビューワー\3Dviewer\3Dviewer\3Dviewer.cpp(237,19): warning C4244:  '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\st\Desktop\試作の真3Dビューワー\3Dviewer\3Dviewer\3Dviewer.cpp(249,25): warning C4244:  '=': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\st\Desktop\試作の真3Dビューワー\3Dviewer\3Dviewer\3Dviewer.cpp(272,119): warning C4244:  '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\st\Desktop\試作の真3Dビューワー\3Dviewer\3Dviewer\3Dviewer.cpp(272,97): warning C4244:  '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\st\Desktop\試作の真3Dビューワー\3Dviewer\3Dviewer\3Dviewer.cpp(272,57): warning C4244:  '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\st\Desktop\試作の真3Dビューワー\3Dviewer\3Dviewer\3Dviewer.cpp(272,36): warning C4244:  '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\st\Desktop\試作の真3Dビューワー\3Dviewer\3Dviewer\3Dviewer.cpp(327,24): warning C4244:  '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\st\Desktop\試作の真3Dビューワー\3Dviewer\3Dviewer\3Dviewer.cpp(340,24): warning C4244:  '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+  3Dviewer.vcxproj -> C:\Users\st\Desktop\試作の真3Dビューワー\3Dviewer\x64\Debug\3Dviewer.exe

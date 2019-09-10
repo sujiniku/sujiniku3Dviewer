@@ -390,20 +390,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int kuroYtyuo = kutoYkiten + ( kutoYhaba / 2) ;
 
 
-			int tyouseiU = 6; // 単に、ピンク壁の初期位置での、視界での大きさを調整するための係数。
-			int tyouseiV = 3;
-			// 人間の目は横に2つあるので、調整係数はu方向とv方向とで等方的ではないと設定している。
-
+			int tyousei = 3; // 単に、ピンク壁の初期位置での、視界での大きさを調整するための係数。
 
 			HBRUSH brasi_buhin_2;
 			brasi_buhin_2 = CreateSolidBrush(RGB(255, 100, 100)); // 壁の表示用のピンク色のブラシを作成
 			SelectObject(hdc, brasi_buhin_2); // ウィンドウhdcと、さきほど作成したブラシを関連づけ
 			// Rectangle(hdc, ((20+170)/2) - 20 * bairitu1 -zure_X, 50 +40, ((20 + 170) / 2) + 20 * bairitu1 - zure_X, 100 +40 ); // 図形の描画
 			Rectangle(hdc,
-				kuroXtyuo - tyouseiU * bairitu2,
-				kuroYtyuo - tyouseiV * bairituZY2,
-				kuroXtyuo - tyouseiU * bairitu3 ,
-				kuroYtyuo - tyouseiV * bairituZY3 ); // 基準の状態
+				kuroXtyuo - tyousei * bairitu2,
+				kuroYtyuo - tyousei * bairituZY2,
+				kuroXtyuo - tyousei * bairitu3 ,
+				kuroYtyuo - tyousei * bairituZY3 ); // 基準の状態
 
 
 			lstrcpy(mojibuf, TEXT("視界"));

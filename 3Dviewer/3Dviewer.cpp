@@ -24,10 +24,12 @@ int ya_sentan_Z = 150; //
 int sLX = 280; int sLZ=80;
 int eLX = 320; int eLZ=80;
 
-int kabeTakasa = 30;
+int labehaba = eLX- sLX; // 40
+int kabeTakasa = 100;
 
 int camX = ya_sentan_X; int camZ = ya_sentan_Z;
 
+int camY = 70; // 視線の高さ
 
 
 int zure_X = 0; // 初期位置からの、矢印の先端のX座標の差分
@@ -185,24 +187,79 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			int kabeYsita = 0; int kabeYue = kabeYsita + kabeTakasa ; // 高さはY軸にしている。
 
-		//	int vecCksX = sLX - camX; int vecCksY = sLZ - camZ; // カメラから壁下に向かうベクトルa
-		//	int vecCEX = eLX - camX; int vecCEZ = eLZ - camZ; // カメラから壁上に向かうベクトルb
+			int kabeZ = sLZ; // 壁のZ位置は、sLZで代用した。
 
 
 
-			int vec_unitX = 1; int vec_unitY = 0; // 単位ベクトル x方向
+			int vecCksZ = kabeZ - camZ; int vecCksY = kabeYsita - camY; // カメラから壁下に向かうベクトル
+			int vecCkuZ = kabeZ - camZ; int vecCkuY = kabeYue - camY; // カメラから壁下に向かうベクトル
+
+
+			// Y
+			_stprintf_s(henkan, 200, TEXT("カメラY: %d"), camY); // デバッグ用メッセージ 
+			TextOut(hdc, 450, 160, henkan, lstrlen(henkan));
+			
+
+			_stprintf_s(henkan, 200, TEXT("壁下Y: %d"), kabeYsita); // デバッグ用メッセージ 
+			TextOut(hdc, 450, 160+20, henkan, lstrlen(henkan));
+
+			_stprintf_s(henkan, 200, TEXT("カメラ → 壁下Y: %d"), vecCksY); // デバッグ用メッセージ 
+			TextOut(hdc, 450, 160+20+20, henkan, lstrlen(henkan));
+
+
+
+			// Z
+			_stprintf_s(henkan, 200, TEXT("カメラZ: %d"), camZ); // デバッグ用メッセージ 
+			TextOut(hdc, 650, 160, henkan, lstrlen(henkan));
+
+			_stprintf_s(henkan, 200, TEXT("壁Z: %d"), kabeZ); // デバッグ用メッセージ 
+			TextOut(hdc, 650, 160 + 20, henkan, lstrlen(henkan));
+
+			_stprintf_s(henkan, 200, TEXT("カメラ → 壁Z: %d"), vecCksZ); // デバッグ用メッセージ 
+			TextOut(hdc, 650, 160 + 20 + 20, henkan, lstrlen(henkan));
+
+
+
+
+
+
+
+
+			// int vec_unitX_x = 1; int vec_unitX_y = 0; // x方向（画面で右側）を向いている単位ベクトルの成分
 
 
 			double naiseki1 = vecCSX * vecCEX + vecCSZ * vecCEZ ;  // 内積a・b
-
-			double naiseki2 = vecCSX * 1 + vecCSZ * 0;  // 内積a・unitX
-
-			double naiseki3 = vecCEX * 1 + vecCEZ * 0;  // 内積 unitX・b
+			double naiseki2 = vecCSX * 1 ;  // 内積a・unitX
+			double naiseki3 = vecCEX * 1 ;  // 内積 unitX・b
 
 
+		
+			// int vec_unitY_y = 1; int vec_unitY_z = 0; // y方向（画面からユーザーの向き）を向いている単位ベクトルの成分
+
+			double naisekiZY1 = vecCksZ * vecCkuZ + vecCksY * vecCkuY;  // ZY側面の内積a・b
+			double naisekiZY2 = vecCksY * 1 ;  // 内積a・unitY
+			double naisekiZY3 = vecCkuY * 1 ;  // 内積 unitY・b
 
 
 
+			double zettaiZY1 = sqrt(
+				(vecCksZ * vecCksZ + vecCksY * vecCksY) * (vecCkuZ * vecCkuZ + vecCkuY * vecCkuY)
+			); // 絶対値|a| |b|
+
+
+	//		_stprintf_s(henkan, 200, TEXT("%d"), (int)zettaiZY1); // デバッグ用メッセージ zettaiZY1 のつもり
+	//		TextOut(hdc, 650, 415, henkan, lstrlen(henkan));
+
+
+
+			double zettaiZY2 = sqrt(
+				(vecCksZ * vecCksZ + vecCksY * vecCksY) * 1
+			); // 絶対値|a| |1|
+
+
+			double zettaiZY3 = sqrt(
+				(vecCkuZ * vecCkuZ + vecCkuY * vecCkuY) * 1
+			); // 絶対値|b| |1|
 
 
 
@@ -212,6 +269,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 							(vecCSX * vecCSX + vecCSZ * vecCSZ ) * (vecCEX * vecCEX + vecCEZ * vecCEZ )   
 							)  ; // 絶対値|a| |b|
 
+
+
+
 			double zettai2 = sqrt(
 				(vecCSX * vecCSX + vecCSZ * vecCSZ) * 1
 			); // 絶対値|a| |1|
@@ -219,36 +279,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			double zettai3 = sqrt(
 				(vecCEX * vecCEX + vecCEZ * vecCEZ) * 1
-			); // 絶対値|a| |1|
+			); // 絶対値|b| |1|
 
+
+			double costhetaZY1 = naisekiZY1 / zettaiZY1;
+			double costhetaZY2 = naisekiZY2 / zettaiZY2;
+			double costhetaZY3 = naisekiZY3 / zettaiZY3;
 
 			double costheta1 = naiseki1 / zettai1   ;
-
-
 			double costheta2 = naiseki2 / zettai2;
-
 			double costheta3 = naiseki3 / zettai3;
 
 
+			float thetaZY1 = (float) acos( costhetaZY1 );
+			float thetaZY2 = (float) acos( costhetaZY2 );
+			float thetaZY3 = (float) acos( costhetaZY3 );
 
-			_stprintf_s(henkan, 200, TEXT("%d"), (int)naiseki1 ) ; // デバッグ用メッセージ 内積のつもり
-			TextOut(hdc, 400, 400, henkan, lstrlen(henkan)) ;
 
-			_stprintf_s(henkan, 200, TEXT("%d"), (int)zettai1); // デバッグ用メッセージ 絶対値のつもり
-			TextOut(hdc, 400, 430, henkan, lstrlen(henkan));
-
-			int bufseisuu = (int) 100 * costheta1 ;
-
-			_stprintf_s(henkan, 200, TEXT("%d"), bufseisuu); // デバッグ用メッセージ cosθのつもり
-			TextOut(hdc, 450, 415, henkan, lstrlen(henkan));
-
-			// aaaaaaa; // エラー文の表示用
-
-			float theta1 = (float) acos( naiseki1 / zettai1 ) ;
-			float theta2 = (float) acos( naiseki2 / zettai2 ) ;
-			float theta3 = (float) acos( naiseki3 / zettai3 ) ;
+			float theta1 = (float) acos( costheta1 ) ;
+			float theta2 = (float) acos( costheta2 ) ;
+			float theta3 = (float) acos( costheta3 ) ;
 
 			float bairitu1 = theta1 / 0.3 ;
+			float bairituZY1 = thetaZY1 / 0.3;
 
 
 			double Pi = 3.141 ;
@@ -256,13 +309,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			double bairitu2 = (theta2 - Pi / 2) / 0.1;
 			double bairitu3 = (theta3 - Pi / 2) / 0.1 ;
 
-
-
-
-
-			bufseisuu = (int)100 * theta1;
-			_stprintf_s(henkan, 200, TEXT("%d"), (int)bufseisuu); // デバッグ用メッセージ 角度θのつもり
-			TextOut(hdc, 550, 415, henkan, lstrlen(henkan));
+			double bairituZY2 = (thetaZY2 - Pi / 2) / 0.1;
+			double bairituZY3 = (thetaZY3 - Pi / 2) / 0.1;
 
 
 
@@ -271,19 +319,91 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		//	TextOut(hdc, 400, 400, henkan, lstrlen(henkan));
 
 
+				// X軸の拡大率の計算デバッグ用
+
+			int debugMx1 = 300 ; int debugMy = 300;
+
+			_stprintf_s(henkan, 200, TEXT("内積: %d"), (int)naiseki1); // デバッグ用メッセージ 内積のつもり
+			TextOut(hdc, debugMx1, debugMy, henkan, lstrlen(henkan));
+
+			_stprintf_s(henkan, 200, TEXT("絶対値: %d"), (int)zettai1); // デバッグ用メッセージ 絶対値のつもり
+			TextOut(hdc, debugMx1, debugMy + 30, henkan, lstrlen(henkan));
+
+			int bufseisuu = (int)100 * costheta2;
+
+			_stprintf_s(henkan, 200, TEXT("100 cosθ2: %d"), bufseisuu); // デバッグ用メッセージ cosθのつもり
+			TextOut(hdc, debugMx1,  debugMy + 60, henkan, lstrlen(henkan));
+
+
+			bufseisuu = (int)100 * theta2;
+			_stprintf_s(henkan, 200, TEXT("100 θ2: %d"), (int)bufseisuu); // デバッグ用メッセージ 角度θのつもり
+			TextOut(hdc, debugMx1, debugMy + 90, henkan, lstrlen(henkan));
+
+			bufseisuu = (int)100 * bairitu2;
+			_stprintf_s(henkan, 200, TEXT("倍率2: %d"), (int)bufseisuu); // デバッグ用メッセージ 角度θのつもり
+			TextOut(hdc, debugMx1, debugMy + 120, henkan, lstrlen(henkan));
+
+
+
+
+			// Y軸の拡大率の計算デバッグ用
+			int debugMx2 = 600;
+
+			_stprintf_s(henkan, 200, TEXT("内積: %d"), (int)naisekiZY1); // デバッグ用メッセージ 内積のつもり
+			TextOut(hdc, debugMx2, debugMy, henkan, lstrlen(henkan));
+
+			_stprintf_s(henkan, 200, TEXT("絶対値: %d"), (int)zettaiZY1); // デバッグ用メッセージ 絶対値のつもり
+			TextOut(hdc, debugMx2, debugMy +30 , henkan, lstrlen(henkan));
+
+			bufseisuu = (int)100 * costhetaZY2;
+
+			_stprintf_s(henkan, 200, TEXT("100 cosθ2: %d"), bufseisuu); // デバッグ用メッセージ cosθのつもり
+			TextOut(hdc, debugMx2, debugMy +60, henkan, lstrlen(henkan));
+
+
+			bufseisuu = (int)100 * thetaZY2;
+			_stprintf_s(henkan, 200, TEXT("100 θ2: %d"), (int)bufseisuu); // デバッグ用メッセージ 角度θのつもり
+			TextOut(hdc, debugMx2, debugMy + 90, henkan, lstrlen(henkan));
+
+			bufseisuu = (int)100 * bairituZY2;
+			_stprintf_s(henkan, 200, TEXT("倍率2: %d"), (int)bufseisuu); // デバッグ用メッセージ 角度θのつもり
+			TextOut(hdc, debugMx2, debugMy + 120, henkan, lstrlen(henkan));
+
+
 
 			// 視界
+
+			int kuroXkiten = 20 ;
+			int kutoYkiten = 70 ;
+
+			int kuroXhaba = 150 ;
+			int kutoYhaba = 100 ;
+
 
 			HBRUSH brasi_buhin_1;
 			brasi_buhin_1 = CreateSolidBrush(RGB(0, 0, 0)); // 黒色のブラシを作成。背景用。
 			SelectObject(hdc, brasi_buhin_1); // ウィンドウhdcと、さきほど作成したブラシを関連づけ
-			Rectangle(hdc, 20, 70, 20+150, 70 +100); // 図形の描画
+			Rectangle(hdc, kuroXkiten, kutoYkiten, kuroXkiten + kuroXhaba, kutoYkiten + kutoYhaba); // 図形の描画
+
+
+			int kuroXtyuo = kuroXkiten + ( kuroXhaba / 2) ;
+			int kuroYtyuo = kutoYkiten + ( kutoYhaba / 2) ;
+
+
+			int tyouseiU = 6; // 単に、ピンク壁の初期位置での、視界での大きさを調整するための係数。
+			int tyouseiV = 3;
+			// 人間の目は横に2つあるので、調整係数はu方向とv方向とで等方的ではないと設定している。
+
 
 			HBRUSH brasi_buhin_2;
-			brasi_buhin_2 = CreateSolidBrush(RGB(255, 100, 100)); // ピンク色のブラシを作成
+			brasi_buhin_2 = CreateSolidBrush(RGB(255, 100, 100)); // 壁の表示用のピンク色のブラシを作成
 			SelectObject(hdc, brasi_buhin_2); // ウィンドウhdcと、さきほど作成したブラシを関連づけ
 			// Rectangle(hdc, ((20+170)/2) - 20 * bairitu1 -zure_X, 50 +40, ((20 + 170) / 2) + 20 * bairitu1 - zure_X, 100 +40 ); // 図形の描画
-			Rectangle(hdc, ((20 + 170) / 2) - 10 * bairitu2, 120 - 15 * sqrt(bairitu1), ((20 + 170) / 2) - 10 * bairitu3 , 120 + 15 * sqrt(bairitu1) ); // 基準の状態
+			Rectangle(hdc,
+				kuroXtyuo - tyouseiU * bairitu2,
+				kuroYtyuo - tyouseiV * bairituZY2,
+				kuroXtyuo - tyouseiU * bairitu3 ,
+				kuroYtyuo - tyouseiV * bairituZY3 ); // 基準の状態
 
 
 			lstrcpy(mojibuf, TEXT("視界"));
@@ -297,8 +417,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			//被写体の上面図
 			
 
-			MoveToEx(hdc, 300 + 20, 60, NULL);
-			LineTo(hdc, 300 + 20, 80);
+		//	MoveToEx(hdc, 300 + 20, 60, NULL);
+	//	LineTo(hdc, 300 + 20, 80);
 			
 			
 			MoveToEx(hdc, sLX, sLZ, NULL);
@@ -338,7 +458,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wParam)		{
 		case VK_UP:
 		{
-			bairitu0 = bairitu0 + 0.1;
+			//bairitu0 = bairitu0 + 0.1;
 			ya_sentan_Z = ya_sentan_Z -5;
 			camZ = ya_sentan_Z;
 
@@ -351,7 +471,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		case VK_DOWN:
 		{
-			bairitu0 = bairitu0 - 0.1;
+			//bairitu0 = bairitu0 - 0.1;
 			ya_sentan_Z = ya_sentan_Z + 5;
 			camZ = ya_sentan_Z;
 
@@ -363,7 +483,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		case VK_RIGHT:
 		{
-			zure_X = zure_X + 5;
+			//zure_X = zure_X + 5;
 
 			ya_sentan_X = ya_sentan_X + 5;
 
@@ -379,7 +499,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		case VK_LEFT:
 		{
-			zure_X = zure_X - 5;
+			//zure_X = zure_X - 5;
 
 			ya_sentan_X = ya_sentan_X - 5;
 

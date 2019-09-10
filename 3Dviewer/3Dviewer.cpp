@@ -18,13 +18,15 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // メイン ウィンドウ ク
 
 
 int ya_sentan_X = 300; // 矢印の先端のX座標
-int ya_sentan_Y = 150; //
+int ya_sentan_Z = 150; //
 
 
-int sLX = 280; int sLY=80;
-int eLX = 320; int eLY=80;
+int sLX = 280; int sLZ=80;
+int eLX = 320; int eLZ=80;
 
-int camX = ya_sentan_X; int camY = ya_sentan_Y;
+int kabeTakasa = 30;
+
+int camX = ya_sentan_X; int camZ = ya_sentan_Z;
 
 
 
@@ -176,18 +178,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			static TCHAR henkan[50]; // 文字列を格納するための変数 henkan を準備
 
 
-			int vecCSX = sLX - camX ; int vecCSY = sLY - camY ; // カメラから起点に向かうベクトルa
-			int vecCEX = eLX - camX ; int vecCEY = eLY - camY; // カメラから終点に向かうベクトルb
+			int vecCSX = sLX - camX ; int vecCSZ = sLZ - camZ ; // カメラから起点に向かうベクトルa
+			int vecCEX = eLX - camX ; int vecCEZ = eLZ - camZ; // カメラから終点に向かうベクトルb
 
-			
+
+
+			int kabeYsita = 0; int kabeYue = kabeYsita + kabeTakasa ; // 高さはY軸にしている。
+
+		//	int vecCksX = sLX - camX; int vecCksY = sLZ - camZ; // カメラから壁下に向かうベクトルa
+		//	int vecCEX = eLX - camX; int vecCEZ = eLZ - camZ; // カメラから壁上に向かうベクトルb
+
+
+
 			int vec_unitX = 1; int vec_unitY = 0; // 単位ベクトル x方向
 
 
-			double naiseki1 = vecCSX * vecCEX + vecCSY * vecCEY ;  // 内積a・b
+			double naiseki1 = vecCSX * vecCEX + vecCSZ * vecCEZ ;  // 内積a・b
 
-			double naiseki2 = vecCSX * 1 + vecCSY * 0;  // 内積a・unitX
+			double naiseki2 = vecCSX * 1 + vecCSZ * 0;  // 内積a・unitX
 
-			double naiseki3 = vecCEX * 1 + vecCEY * 0;  // 内積 unitX・b
+			double naiseki3 = vecCEX * 1 + vecCEZ * 0;  // 内積 unitX・b
+
+
+
+
 
 
 
@@ -195,16 +209,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 			double zettai1 = sqrt (
-							(vecCSX * vecCSX + vecCSY * vecCSY ) * (vecCEX * vecCEX + vecCEY * vecCEY )   
+							(vecCSX * vecCSX + vecCSZ * vecCSZ ) * (vecCEX * vecCEX + vecCEZ * vecCEZ )   
 							)  ; // 絶対値|a| |b|
 
 			double zettai2 = sqrt(
-				(vecCSX * vecCSX + vecCSY * vecCSY) * 1
+				(vecCSX * vecCSX + vecCSZ * vecCSZ) * 1
 			); // 絶対値|a| |1|
 
 
 			double zettai3 = sqrt(
-				(vecCEX * vecCEX + vecCEY * vecCEY) * 1
+				(vecCEX * vecCEX + vecCEZ * vecCEZ) * 1
 			); // 絶対値|a| |1|
 
 
@@ -287,23 +301,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			LineTo(hdc, 300 + 20, 80);
 			
 			
-			MoveToEx(hdc, sLX, sLY, NULL);
-			LineTo(hdc, eLX, eLY);
+			MoveToEx(hdc, sLX, sLZ, NULL);
+			LineTo(hdc, eLX, eLZ);
 
 
 
 			//カメラの位置と向き。矢印の先端を位置の基準とする。
 
-			MoveToEx(hdc, ya_sentan_X , ya_sentan_Y, NULL);
-			LineTo(hdc, ya_sentan_X , ya_sentan_Y +100);
+			MoveToEx(hdc, ya_sentan_X , ya_sentan_Z, NULL);
+			LineTo(hdc, ya_sentan_X , ya_sentan_Z +100);
 
-			MoveToEx(hdc, ya_sentan_X , ya_sentan_Y, NULL);
-			LineTo(hdc, ya_sentan_X  +20, ya_sentan_Y + 20);
+			MoveToEx(hdc, ya_sentan_X , ya_sentan_Z, NULL);
+			LineTo(hdc, ya_sentan_X  +20, ya_sentan_Z + 20);
 
 
 
-			MoveToEx(hdc, ya_sentan_X , ya_sentan_Y, NULL);
-			LineTo(hdc, ya_sentan_X - 20, ya_sentan_Y + 20);
+			MoveToEx(hdc, ya_sentan_X , ya_sentan_Z, NULL);
+			LineTo(hdc, ya_sentan_X - 20, ya_sentan_Z + 20);
 
 
 			lstrcpy(mojibuf, TEXT("上面図"));
@@ -325,8 +339,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case VK_UP:
 		{
 			bairitu0 = bairitu0 + 0.1;
-			ya_sentan_Y = ya_sentan_Y -5;
-			camY = ya_sentan_Y;
+			ya_sentan_Z = ya_sentan_Z -5;
+			camZ = ya_sentan_Z;
 
 			InvalidateRect(hWnd, NULL, TRUE);
 			UpdateWindow(hWnd);
@@ -338,8 +352,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case VK_DOWN:
 		{
 			bairitu0 = bairitu0 - 0.1;
-			ya_sentan_Y = ya_sentan_Y + 5;
-			camY = ya_sentan_Y;
+			ya_sentan_Z = ya_sentan_Z + 5;
+			camZ = ya_sentan_Z;
 
 			InvalidateRect(hWnd, NULL, TRUE);
 			UpdateWindow(hWnd);

@@ -40,6 +40,18 @@ float bairitu0 = 1.0;
 TCHAR mojibuf[100] = TEXT("テスト");
 
 
+
+enum move_what
+{
+	moveCamera,
+	moveModel,
+};
+
+enum move_what now_movewhat = moveCamera ;
+
+
+
+
 // このコード モジュールに含まれる関数の宣言を転送します:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -312,6 +324,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			double bairituZY2 = (thetaZY2 - Pi / 2) / 0.1;
 			double bairituZY3 = (thetaZY3 - Pi / 2) / 0.1;
 
+
+
+
+
+
+now_movewhat = moveCamera ;
+
+			// 移動対象の明記のためのメッセージ表示
+
+			int NowModePx = 500; int NowModePy = 20 ;
+
+
+			if (now_movewhat == moveCamera) 			{
+				lstrcpy(mojibuf, TEXT("カメラ移動モード"));
+			}
+
+			if (now_movewhat == moveModel) {
+				lstrcpy(mojibuf, TEXT("被写体 移動モード"));
+			}
+
+			_stprintf_s(henkan, 200, TEXT("現在は %s です。"), mojibuf); // 現在のモード表示
+			TextOut(hdc, NowModePx, NowModePy, henkan, lstrlen(henkan));
 
 
 			

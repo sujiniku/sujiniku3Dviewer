@@ -50,6 +50,13 @@ enum move_what
 enum move_what now_movewhat = moveCamera ;
 
 
+enum move_type
+{
+	moveParallel,
+	moveRotate,
+};
+
+enum move_type now_movetype = moveParallel ;
 
 
 // このコード モジュールに含まれる関数の宣言を転送します:
@@ -348,6 +355,25 @@ now_movewhat = moveCamera ;
 			TextOut(hdc, NowModePx, NowModePy, henkan, lstrlen(henkan));
 
 
+			if (now_movetype == moveParallel) {
+				_stprintf_s(henkan, 200, TEXT("平行移動の指定中です。"), mojibuf); // 現在の移動タイプ表示
+				TextOut(hdc, NowModePx, NowModePy + 25, henkan, lstrlen(henkan));	
+
+				_stprintf_s(henkan, 200, TEXT("Rボタンで回転移動に切りかえます。※ 未実装 "), mojibuf);
+				TextOut(hdc, NowModePx, NowModePy + 50, henkan, lstrlen(henkan));
+
+			}
+
+			if (now_movetype == moveRotate) {
+				_stprintf_s(henkan, 200, TEXT("回転移動の指定中です。"), mojibuf); // 現在の移動タイプ表示
+				TextOut(hdc, NowModePx, NowModePy + 25, henkan, lstrlen(henkan));
+
+				_stprintf_s(henkan, 200, TEXT("Pボタンで平行移動に切りかえます。"), mojibuf); 
+				TextOut(hdc, NowModePx, NowModePy + 50, henkan, lstrlen(henkan));
+
+			}
+
+
 			
 		//	_stprintf_s(henkan, 200, TEXT("%d"), 100*theta); // デバッグ用メッセージ
 		//	TextOut(hdc, 400, 400, henkan, lstrlen(henkan));
@@ -485,65 +511,88 @@ now_movewhat = moveCamera ;
 
 
 	case WM_KEYDOWN:
+		
+		if (now_movewhat == moveCamera ) {
+			if (now_movetype == moveParallel) {
 
-		switch (wParam)		{
-		case VK_UP:
-		{
-			//bairitu0 = bairitu0 + 0.1;
-			ya_sentan_Z = ya_sentan_Z -5;
-			camZ = ya_sentan_Z;
+				switch (wParam) {
+				case VK_UP:
+				{
+					ya_sentan_Z = ya_sentan_Z - 5;
+					camZ = ya_sentan_Z;
 
-			InvalidateRect(hWnd, NULL, TRUE);
-			UpdateWindow(hWnd);
+					InvalidateRect(hWnd, NULL, TRUE);
+					UpdateWindow(hWnd);
 
-			break;
-		}
-
-
-		case VK_DOWN:
-		{
-			//bairitu0 = bairitu0 - 0.1;
-			ya_sentan_Z = ya_sentan_Z + 5;
-			camZ = ya_sentan_Z;
-
-			InvalidateRect(hWnd, NULL, TRUE);
-			UpdateWindow(hWnd);
-
-			break;
-		}
-
-		case VK_RIGHT:
-		{
-			//zure_X = zure_X + 5;
-
-			ya_sentan_X = ya_sentan_X + 5;
-
-			camX = ya_sentan_X;
+					break;
+				}
 
 
+				case VK_DOWN:
+				{
+					ya_sentan_Z = ya_sentan_Z + 5;
+					camZ = ya_sentan_Z;
 
-			InvalidateRect(hWnd, NULL, TRUE);
-			UpdateWindow(hWnd);
+					InvalidateRect(hWnd, NULL, TRUE);
+					UpdateWindow(hWnd);
 
-			break;
-		}
+					break;
+				}
 
-		case VK_LEFT:
-		{
-			//zure_X = zure_X - 5;
+				case VK_RIGHT:
+				{
+					ya_sentan_X = ya_sentan_X + 5;
 
-			ya_sentan_X = ya_sentan_X - 5;
+					camX = ya_sentan_X;
 
-			camX = ya_sentan_X;
+					InvalidateRect(hWnd, NULL, TRUE);
+					UpdateWindow(hWnd);
 
+					break;
+				}
 
-			InvalidateRect(hWnd, NULL, TRUE);
-			UpdateWindow(hWnd);
+				case VK_LEFT:
+				{
+					ya_sentan_X = ya_sentan_X - 5;
 
-			break;
-		}
+					camX = ya_sentan_X;
 
-		break;
+					InvalidateRect(hWnd, NULL, TRUE);
+					UpdateWindow(hWnd);
+
+					break;
+				}
+
+				case 'R':
+				{
+					now_movetype = moveRotate;
+
+					InvalidateRect(hWnd, NULL, TRUE);
+					UpdateWindow(hWnd);
+
+					break;
+				}
+				break;
+
+				}
+			}
+
+			if (now_movetype == moveRotate) {
+				switch (wParam)
+				{
+				case 'P':
+				{
+					now_movetype = moveParallel;
+
+					InvalidateRect(hWnd, NULL, TRUE);
+					UpdateWindow(hWnd);
+
+					break;
+				}
+				break;
+				}
+
+			}
 		}
 
 	break;

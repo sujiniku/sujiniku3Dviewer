@@ -14,18 +14,19 @@ WCHAR szTitle[MAX_LOADSTRING];                  // タイトル バーのテキ�
 WCHAR szWindowClass[MAX_LOADSTRING];            // メイン ウィンドウ クラス名
 
 
+int camX = 300;
+int camZ = 150;
 
 
-
-int ya_sentan_X = 300; // 矢印の先端のX座標
-int ya_sentan_Z = 150; //
+int ya_sentan_X = camX; // 矢印の先端のX座標
+int ya_sentan_Z = camZ; //
 
 double ya_sentan_Xdelta = (double)ya_sentan_X;
 double ya_sentan_Zdelta = (double)ya_sentan_Z;
 
 
-int ya_syuutan_X = 300 ;
-int ya_syuutan_Z = 150 + 100;
+int ya_syuutan_X = camX ;
+int ya_syuutan_Z = camZ + 100;
 
 double ya_syuutan_Xdelta = (double) ya_syuutan_X;
 double ya_syuutan_Zdelta = (double) ya_syuutan_Z;
@@ -41,10 +42,10 @@ int eLX = 320; int eLZ=80;
 int kabehaba = eLX- sLX; // 40
 int kabeTakasa = 100;
 
-int camX = ya_sentan_X; int camZ = ya_sentan_Z;
 
-int rotXcenter = ya_sentan_X + 10;
-int rotZcenter = ya_sentan_Z + 10;
+
+int rotXcenter = camX + 10;
+int rotZcenter = camZ + 10;
 
 int camY = 70; // 視線の高さ
 
@@ -57,6 +58,11 @@ int zure_X = 0; // 初期位置からの、矢印の先端のX座標の差分
 int zure_Y = 0; //
 
 float bairitu0 = 1.0;
+
+
+double kakuRuiseki = 0.05;
+int kakuKeisuu = 1;
+
 
 TCHAR mojibuf[100] = TEXT("テスト");
 
@@ -606,6 +612,10 @@ now_movewhat = moveCamera ;
 			}
 
 			if (now_movetype == moveRotate) {
+
+				ya_rot_centerX = ya_syuutan_X ;
+				ya_rot_centerZ = ya_syuutan_Z ;
+				
 				switch (wParam)
 				{
 
@@ -615,21 +625,20 @@ now_movewhat = moveCamera ;
 					// ya_sentan_X = ya_sentan_X + 5;
 
 
-					double kakuTyousei = 0.05;
+					double kakuTyousei = +0.05;
 
-					ya_sentan_Xdelta = cos(kakuTyousei) * (ya_sentan_X - ya_rot_centerX) + (-1) * sin(kakuTyousei) * (ya_sentan_Z - ya_rot_centerZ);
-					ya_sentan_Zdelta = sin(kakuTyousei) * (ya_sentan_X - ya_rot_centerX) + cos(kakuTyousei) * (ya_sentan_Z - ya_rot_centerZ);
-
-					ya_sentan_X = (int)(ya_rot_centerX + ya_sentan_Xdelta);
-					ya_sentan_Z = (int)(ya_rot_centerZ + ya_sentan_Zdelta);
+					// kakuKeisuu = kakuKeisuu + 1;			
+					kakuRuiseki = kakuKeisuu * kakuTyousei;
 
 
+					ya_sentan_Xdelta = cos(kakuRuiseki) * (ya_sentan_X - ya_rot_centerX) + (-1) * sin(kakuRuiseki) * (ya_sentan_Z - ya_rot_centerZ);
+					ya_sentan_Zdelta = sin(kakuRuiseki) * (ya_sentan_X - ya_rot_centerX) + cos(kakuRuiseki) * (ya_sentan_Z - ya_rot_centerZ);
 
-					camXdelta = cos(-kakuTyousei) * (camX -rotXcenter) + (-1)* sin(-kakuTyousei)* (camZ - rotZcenter)   ;
-					camZdelta = sin(-kakuTyousei) * (camX - rotXcenter) +  cos(-kakuTyousei) * (camZ - rotZcenter);
+					ya_sentan_X = (int) (ya_rot_centerX + ya_sentan_Xdelta) ;
+					ya_sentan_Z = (int) (ya_rot_centerZ + ya_sentan_Zdelta) ;
 
-					camX = camXdelta + rotXcenter ;
-					camZ = camZdelta + rotZcenter ;
+					camX = ya_sentan_X;
+					camZ = ya_sentan_Z;
 
 					InvalidateRect(hWnd, NULL, TRUE);
 					UpdateWindow(hWnd);
@@ -649,12 +658,8 @@ now_movewhat = moveCamera ;
 					ya_sentan_Z = (int)(ya_rot_centerZ + ya_sentan_Zdelta);
 
 
-
-					camXdelta = cos(-kakuTyousei) * (camX - rotXcenter) + (-1) * sin(-kakuTyousei) * (camZ - rotZcenter);
-					camZdelta = sin(-kakuTyousei) * (camX - rotXcenter) + cos(-kakuTyousei) * (camZ - rotZcenter);
-
-					camX = camXdelta + rotXcenter;
-					camZ = camZdelta + rotZcenter;
+					camX = ya_sentan_X;
+					camZ = ya_sentan_Z;
 
 					InvalidateRect(hWnd, NULL, TRUE);
 					UpdateWindow(hWnd);

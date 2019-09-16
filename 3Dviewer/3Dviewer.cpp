@@ -236,14 +236,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 
-			int wallYsita = 0; int wallYue = wallYsita + wallHeight ; // 高さはY軸にしている。
+			int wallYunder = 0; int wallYtop = wallYunder + wallHeight ; // 高さはY軸にしている。
 
 			int wallZ = sLZ; // 壁のZ位置は、sLZで代用した。
 
 
 
-			int vecCksZ = wallZ - camZ; int vecCksY = wallYsita - camY; // カメラから壁下に向かうベクトル
-			int vecCkuZ = wallZ - camZ; int vecCkuY = wallYue - camY; // カメラから壁下に向かうベクトル
+			int vecCksZ = wallZ - camZ; int vecCksY = wallYunder - camY; // カメラから壁下に向かうベクトル
+			int vecCkuZ = wallZ - camZ; int vecCkuY = wallYtop - camY; // カメラから壁下に向かうベクトル
 
 
 			// Y
@@ -251,7 +251,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			TextOut(hdc, 450, 160, convertStringBuffer, lstrlen(convertStringBuffer));
 			
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("壁下Y: %d"), wallYsita); // デバッグ用メッセージ 
+			_stprintf_s(convertStringBuffer, 200, TEXT("壁下Y: %d"), wallYunder); // デバッグ用メッセージ 
 			TextOut(hdc, 450, 160+20, convertStringBuffer, lstrlen(convertStringBuffer));
 
 			_stprintf_s(convertStringBuffer, 200, TEXT("カメラ → 壁下Y: %d"), vecCksY); // デバッグ用メッセージ 
@@ -466,20 +466,20 @@ now_movewhat = moveCamera ;
 			// 視界
 
 			int blackXstartPoint = 20 ;
-			int kutoYstartPoint = 70 ;
+			int blackYstartPoint = 70 ;
 
 			int blackXWidth = 150 ;
-			int kutoYWidth = 100 ;
+			int blackYWidth = 100 ;
 
 
 			HBRUSH brasi_buhin_1;
 			brasi_buhin_1 = CreateSolidBrush(RGB(0, 0, 0)); // 黒色のブラシを作成。背景用。
 			SelectObject(hdc, brasi_buhin_1); // ウィンドウhdcと、さきほど作成したブラシを関連づけ
-			Rectangle(hdc, blackXstartPoint, kutoYstartPoint, blackXstartPoint + blackXWidth, kutoYstartPoint + kutoYWidth); // 図形の描画
+			Rectangle(hdc, blackXstartPoint, blackYstartPoint, blackXstartPoint + blackXWidth, blackYstartPoint + blackYWidth); // 図形の描画
 
 
 			int blackXcentral = blackXstartPoint + ( blackXWidth / 2) ;
-			int blackYcentral = kutoYstartPoint + ( kutoYWidth / 2) ;
+			int blackYcentral = blackYstartPoint + ( blackYWidth / 2) ;
 
 
 			int tyousei = 3; // 単に、ピンク壁の初期位置での、視界での大きさを調整するための係数。

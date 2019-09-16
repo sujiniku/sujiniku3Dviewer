@@ -541,6 +541,8 @@ now_movewhat = moveCamera ;
 				case VK_UP:
 				{
 					ya_sentan_Z = ya_sentan_Z - 5;
+					ya_syuutan_Z = ya_syuutan_Z - 5;
+
 					camZ = ya_sentan_Z;
 
 					InvalidateRect(hWnd, NULL, TRUE);
@@ -553,6 +555,8 @@ now_movewhat = moveCamera ;
 				case VK_DOWN:
 				{
 					ya_sentan_Z = ya_sentan_Z + 5;
+					ya_syuutan_Z = ya_syuutan_Z + 5;
+
 					camZ = ya_sentan_Z;
 
 					InvalidateRect(hWnd, NULL, TRUE);
@@ -564,6 +568,7 @@ now_movewhat = moveCamera ;
 				case VK_RIGHT:
 				{
 					ya_sentan_X = ya_sentan_X + 5;
+					ya_syuutan_X = ya_syuutan_X + 5;
 
 					camX = ya_sentan_X;
 
@@ -576,6 +581,7 @@ now_movewhat = moveCamera ;
 				case VK_LEFT:
 				{
 					ya_sentan_X = ya_sentan_X - 5;
+					ya_syuutan_X = ya_syuutan_X - 5;
 
 					camX = ya_sentan_X;
 

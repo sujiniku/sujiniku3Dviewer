@@ -66,7 +66,7 @@ float magnification0 = 1.0;
 
 
 double angleAccumulation = 0.05;
-int angleCoefficient = 1;
+int angleCount = 0 ;
 
 
 TCHAR WordBuffer[100] = TEXT("テスト");
@@ -613,7 +613,10 @@ now_movewhat = moveCamera ;
 					arrow_Head_X0rot = arrow_Head_X;
 					arrow_Head_Z0rot = arrow_Head_Z;
 
+					arrow_rot_centerX = arrow_Bottom_X;
+					arrow_rot_centerZ = arrow_Bottom_Z;
 
+					angleCount = 0;
 
 					break;
 				}
@@ -624,8 +627,7 @@ now_movewhat = moveCamera ;
 
 			if (now_movetype == moveRotate) {
 
-				arrow_rot_centerX = arrow_Bottom_X ;
-				arrow_rot_centerZ = arrow_Bottom_Z ;
+				
 				
 				switch (wParam)
 				{
@@ -633,13 +635,11 @@ now_movewhat = moveCamera ;
 
 				case VK_RIGHT:
 				{
-					// arrow_Head_X = arrow_Head_X + 5;
-
-
+					
 					double angleStep = +0.05;
 
-					angleCoefficient = angleCoefficient + 1;			
-					angleAccumulation = angleCoefficient * angleStep;
+					angleCount = angleCount + 1;			
+					angleAccumulation = angleCount * angleStep;
 
 
 					arrow_Head_Xdelta = cos(angleAccumulation) * (arrow_Head_X0rot - arrow_rot_centerX) + (-1) * sin(angleAccumulation) * (arrow_Head_Z0rot - arrow_rot_centerZ);
@@ -662,8 +662,8 @@ now_movewhat = moveCamera ;
 
 					double angleStep = 0.05;
 
-					angleCoefficient = angleCoefficient - 1;
-					angleAccumulation = angleCoefficient * angleStep;
+					angleCount = angleCount - 1;
+					angleAccumulation = angleCount * angleStep;
 
 
 					arrow_Head_Xdelta = cos(angleAccumulation) * (arrow_Head_X0rot - arrow_rot_centerX) + (-1) * sin(angleAccumulation) * (arrow_Head_Z0rot - arrow_rot_centerZ);

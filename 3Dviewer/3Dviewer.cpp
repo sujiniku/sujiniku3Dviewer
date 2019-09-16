@@ -18,29 +18,34 @@ int camX = 300;
 int camZ = 150;
 
 
-int ya_sentan_X = camX; // 矢印の先端のX座標
-int ya_sentan_Z = camZ; //
-
-double ya_sentan_Xdelta = (double)ya_sentan_X;
-double ya_sentan_Zdelta = (double)ya_sentan_Z;
+int arrow_Head_X = camX; // 矢印の先端のX座標
+int arrow_Head_Z = camZ; //
 
 
-int ya_syuutan_X = camX ;
-int ya_syuutan_Z = camZ + 100;
-
-double ya_syuutan_Xdelta = (double) ya_syuutan_X;
-double ya_syuutan_Zdelta = (double) ya_syuutan_Z;
+int arrow_Head_X0rot = camX; // 回転に入る前の位置保存。ケタ落ちの誤差対策のため。矢印の先端のX座標
+int arrow_Head_Z0rot = camZ;
 
 
-int ya_rot_centerX = ya_syuutan_X;
-int ya_rot_centerZ = ya_syuutan_Z;
+double arrow_Head_Xdelta = (double)arrow_Head_X;
+double arrow_Head_Zdelta = (double)arrow_Head_Z;
+
+
+int arrow_Bottom_X = camX ;
+int arrow_Bottom_Z = camZ + 100;
+
+double arrow_Bottom_Xdelta = (double) arrow_Bottom_X;
+double arrow_Bottom_Zdelta = (double) arrow_Bottom_Z;
+
+
+int arrow_rot_centerX = arrow_Bottom_X;
+int arrow_rot_centerZ = arrow_Bottom_Z;
 
 
 int sLX = 280; int sLZ=80;
 int eLX = 320; int eLZ=80;
 
-int kabehaba = eLX- sLX; // 40
-int kabeTakasa = 100;
+int wallWidth = eLX- sLX; // 40
+int wallHeight = 100;
 
 
 
@@ -57,14 +62,14 @@ double camZdelta = (double)camY;
 int zure_X = 0; // 初期位置からの、矢印の先端のX座標の差分
 int zure_Y = 0; //
 
-float bairitu0 = 1.0;
+float magnification0 = 1.0;
 
 
-double kakuRuiseki = 0.05;
-int kakuKeisuu = 1;
+double angleAccumulation = 0.05;
+int angleCoefficient = 1;
 
 
-TCHAR mojibuf[100] = TEXT("テスト");
+TCHAR WordBuffer[100] = TEXT("テスト");
 
 
 
@@ -223,7 +228,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: HDC を使用する描画コードをここに追加してください...
 
-			static TCHAR henkan[50]; // 文字列を格納するための変数 henkan を準備
+			static TCHAR convertStringBuffer[50]; // 文字列を格納するための変数 convertStringBuffer を準備
 
 
 			int vecCSX = sLX - camX ; int vecCSZ = sLZ - camZ ; // カメラから起点に向かうベクトルa
@@ -231,38 +236,38 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 
-			int kabeYsita = 0; int kabeYue = kabeYsita + kabeTakasa ; // 高さはY軸にしている。
+			int wallYsita = 0; int wallYue = wallYsita + wallHeight ; // 高さはY軸にしている。
 
-			int kabeZ = sLZ; // 壁のZ位置は、sLZで代用した。
+			int wallZ = sLZ; // 壁のZ位置は、sLZで代用した。
 
 
 
-			int vecCksZ = kabeZ - camZ; int vecCksY = kabeYsita - camY; // カメラから壁下に向かうベクトル
-			int vecCkuZ = kabeZ - camZ; int vecCkuY = kabeYue - camY; // カメラから壁下に向かうベクトル
+			int vecCksZ = wallZ - camZ; int vecCksY = wallYsita - camY; // カメラから壁下に向かうベクトル
+			int vecCkuZ = wallZ - camZ; int vecCkuY = wallYue - camY; // カメラから壁下に向かうベクトル
 
 
 			// Y
-			_stprintf_s(henkan, 200, TEXT("カメラY: %d"), camY); // デバッグ用メッセージ 
-			TextOut(hdc, 450, 160, henkan, lstrlen(henkan));
+			_stprintf_s(convertStringBuffer, 200, TEXT("カメラY: %d"), camY); // デバッグ用メッセージ 
+			TextOut(hdc, 450, 160, convertStringBuffer, lstrlen(convertStringBuffer));
 			
 
-			_stprintf_s(henkan, 200, TEXT("壁下Y: %d"), kabeYsita); // デバッグ用メッセージ 
-			TextOut(hdc, 450, 160+20, henkan, lstrlen(henkan));
+			_stprintf_s(convertStringBuffer, 200, TEXT("壁下Y: %d"), wallYsita); // デバッグ用メッセージ 
+			TextOut(hdc, 450, 160+20, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			_stprintf_s(henkan, 200, TEXT("カメラ → 壁下Y: %d"), vecCksY); // デバッグ用メッセージ 
-			TextOut(hdc, 450, 160+20+20, henkan, lstrlen(henkan));
+			_stprintf_s(convertStringBuffer, 200, TEXT("カメラ → 壁下Y: %d"), vecCksY); // デバッグ用メッセージ 
+			TextOut(hdc, 450, 160+20+20, convertStringBuffer, lstrlen(convertStringBuffer));
 
 
 
 			// Z
-			_stprintf_s(henkan, 200, TEXT("カメラZ: %d"), camZ); // デバッグ用メッセージ 
-			TextOut(hdc, 650, 160, henkan, lstrlen(henkan));
+			_stprintf_s(convertStringBuffer, 200, TEXT("カメラZ: %d"), camZ); // デバッグ用メッセージ 
+			TextOut(hdc, 650, 160, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			_stprintf_s(henkan, 200, TEXT("壁Z: %d"), kabeZ); // デバッグ用メッセージ 
-			TextOut(hdc, 650, 160 + 20, henkan, lstrlen(henkan));
+			_stprintf_s(convertStringBuffer, 200, TEXT("壁Z: %d"), wallZ); // デバッグ用メッセージ 
+			TextOut(hdc, 650, 160 + 20, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			_stprintf_s(henkan, 200, TEXT("カメラ → 壁Z: %d"), vecCksZ); // デバッグ用メッセージ 
-			TextOut(hdc, 650, 160 + 20 + 20, henkan, lstrlen(henkan));
+			_stprintf_s(convertStringBuffer, 200, TEXT("カメラ → 壁Z: %d"), vecCksZ); // デバッグ用メッセージ 
+			TextOut(hdc, 650, 160 + 20 + 20, convertStringBuffer, lstrlen(convertStringBuffer));
 
 
 
@@ -288,22 +293,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 
-			double zettaiZY1 = sqrt(
+			double absoluteZY1 = sqrt(
 				(vecCksZ * vecCksZ + vecCksY * vecCksY) * (vecCkuZ * vecCkuZ + vecCkuY * vecCkuY)
 			); // 絶対値|a| |b|
 
 
-	//		_stprintf_s(henkan, 200, TEXT("%d"), (int)zettaiZY1); // デバッグ用メッセージ zettaiZY1 のつもり
-	//		TextOut(hdc, 650, 415, henkan, lstrlen(henkan));
+	//		_stprintf_s(convertStringBuffer, 200, TEXT("%d"), (int)absoluteZY1); // デバッグ用メッセージ absoluteZY1 のつもり
+	//		TextOut(hdc, 650, 415, convertStringBuffer, lstrlen(convertStringBuffer));
 
 
 
-			double zettaiZY2 = sqrt(
+			double absoluteZY2 = sqrt(
 				(vecCksZ * vecCksZ + vecCksY * vecCksY) * 1
 			); // 絶対値|a| |1|
 
 
-			double zettaiZY3 = sqrt(
+			double absoluteZY3 = sqrt(
 				(vecCkuZ * vecCkuZ + vecCkuY * vecCkuY) * 1
 			); // 絶対値|b| |1|
 
@@ -311,30 +316,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 
-			double zettai1 = sqrt (
+			double absolute1 = sqrt (
 							(vecCSX * vecCSX + vecCSZ * vecCSZ ) * (vecCEX * vecCEX + vecCEZ * vecCEZ )   
 							)  ; // 絶対値|a| |b|
 
 
 
 
-			double zettai2 = sqrt(
+			double absolute2 = sqrt(
 				(vecCSX * vecCSX + vecCSZ * vecCSZ) * 1
 			); // 絶対値|a| |1|
 
 
-			double zettai3 = sqrt(
+			double absolute3 = sqrt(
 				(vecCEX * vecCEX + vecCEZ * vecCEZ) * 1
 			); // 絶対値|b| |1|
 
 
-			double costhetaZY1 = naisekiZY1 / zettaiZY1;
-			double costhetaZY2 = naisekiZY2 / zettaiZY2;
-			double costhetaZY3 = naisekiZY3 / zettaiZY3;
+			double costhetaZY1 = naisekiZY1 / absoluteZY1;
+			double costhetaZY2 = naisekiZY2 / absoluteZY2;
+			double costhetaZY3 = naisekiZY3 / absoluteZY3;
 
-			double costheta1 = naiseki1 / zettai1   ;
-			double costheta2 = naiseki2 / zettai2;
-			double costheta3 = naiseki3 / zettai3;
+			double costheta1 = naiseki1 / absolute1   ;
+			double costheta2 = naiseki2 / absolute2;
+			double costheta3 = naiseki3 / absolute3;
 
 
 			float thetaZY1 = (float) acos( costhetaZY1 );
@@ -346,17 +351,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			float theta2 = (float) acos( costheta2 ) ;
 			float theta3 = (float) acos( costheta3 ) ;
 
-			float bairitu1 = theta1 / 0.3 ;
-			float bairituZY1 = thetaZY1 / 0.3;
+			float magnification1 = theta1 / 0.3 ;
+			float magnificationZY1 = thetaZY1 / 0.3;
 
 
 			double Pi = 3.141 ;
 
-			double bairitu2 = (theta2 - Pi / 2) / 0.1;
-			double bairitu3 = (theta3 - Pi / 2) / 0.1 ;
+			double magnification2 = (theta2 - Pi / 2) / 0.1;
+			double magnification3 = (theta3 - Pi / 2) / 0.1 ;
 
-			double bairituZY2 = (thetaZY2 - Pi / 2) / 0.1;
-			double bairituZY3 = (thetaZY3 - Pi / 2) / 0.1;
+			double magnificationZY2 = (thetaZY2 - Pi / 2) / 0.1;
+			double magnificationZY3 = (thetaZY3 - Pi / 2) / 0.1;
 
 
 
@@ -371,64 +376,64 @@ now_movewhat = moveCamera ;
 
 
 			if (now_movewhat == moveCamera) 			{
-				lstrcpy(mojibuf, TEXT("カメラ移動モード"));
+				lstrcpy(WordBuffer, TEXT("カメラ移動モード"));
 			}
 
 			if (now_movewhat == moveModel) {
-				lstrcpy(mojibuf, TEXT("被写体 移動モード"));
+				lstrcpy(WordBuffer, TEXT("被写体 移動モード"));
 			}
 
-			_stprintf_s(henkan, 200, TEXT("現在は %s です。"), mojibuf); // 現在のモード表示
-			TextOut(hdc, NowModePx, NowModePy, henkan, lstrlen(henkan));
+			_stprintf_s(convertStringBuffer, 200, TEXT("現在は %s です。"), WordBuffer); // 現在のモード表示
+			TextOut(hdc, NowModePx, NowModePy, convertStringBuffer, lstrlen(convertStringBuffer));
 
 
 			if (now_movetype == moveParallel) {
-				_stprintf_s(henkan, 200, TEXT("平行移動の指定中です。"), mojibuf); // 現在の移動タイプ表示
-				TextOut(hdc, NowModePx, NowModePy + 25, henkan, lstrlen(henkan));	
+				_stprintf_s(convertStringBuffer, 200, TEXT("平行移動の指定中です。"), WordBuffer); // 現在の移動タイプ表示
+				TextOut(hdc, NowModePx, NowModePy + 25, convertStringBuffer, lstrlen(convertStringBuffer));	
 
-				_stprintf_s(henkan, 200, TEXT("Rボタンで回転移動に切りかえます。※ 未実装 "), mojibuf);
-				TextOut(hdc, NowModePx, NowModePy + 50, henkan, lstrlen(henkan));
+				_stprintf_s(convertStringBuffer, 200, TEXT("Rボタンで回転移動に切りかえます。※ 未実装 "), WordBuffer);
+				TextOut(hdc, NowModePx, NowModePy + 50, convertStringBuffer, lstrlen(convertStringBuffer));
 
 			}
 
 			if (now_movetype == moveRotate) {
-				_stprintf_s(henkan, 200, TEXT("回転移動の指定中です。"), mojibuf); // 現在の移動タイプ表示
-				TextOut(hdc, NowModePx, NowModePy + 25, henkan, lstrlen(henkan));
+				_stprintf_s(convertStringBuffer, 200, TEXT("回転移動の指定中です。"), WordBuffer); // 現在の移動タイプ表示
+				TextOut(hdc, NowModePx, NowModePy + 25, convertStringBuffer, lstrlen(convertStringBuffer));
 
-				_stprintf_s(henkan, 200, TEXT("Pボタンで平行移動に切りかえます。"), mojibuf); 
-				TextOut(hdc, NowModePx, NowModePy + 50, henkan, lstrlen(henkan));
+				_stprintf_s(convertStringBuffer, 200, TEXT("Pボタンで平行移動に切りかえます。"), WordBuffer); 
+				TextOut(hdc, NowModePx, NowModePy + 50, convertStringBuffer, lstrlen(convertStringBuffer));
 
 			}
 
 
 			
-		//	_stprintf_s(henkan, 200, TEXT("%d"), 100*theta); // デバッグ用メッセージ
-		//	TextOut(hdc, 400, 400, henkan, lstrlen(henkan));
+		//	_stprintf_s(convertStringBuffer, 200, TEXT("%d"), 100*theta); // デバッグ用メッセージ
+		//	TextOut(hdc, 400, 400, convertStringBuffer, lstrlen(convertStringBuffer));
 
 
 				// X軸の拡大率の計算デバッグ用
 
 			int debugMx1 = 300 ; int debugMy = 300;
 
-			_stprintf_s(henkan, 200, TEXT("内積: %d"), (int)naiseki1); // デバッグ用メッセージ 内積のつもり
-			TextOut(hdc, debugMx1, debugMy, henkan, lstrlen(henkan));
+			_stprintf_s(convertStringBuffer, 200, TEXT("内積: %d"), (int)naiseki1); // デバッグ用メッセージ 内積のつもり
+			TextOut(hdc, debugMx1, debugMy, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			_stprintf_s(henkan, 200, TEXT("絶対値: %d"), (int)zettai1); // デバッグ用メッセージ 絶対値のつもり
-			TextOut(hdc, debugMx1, debugMy + 30, henkan, lstrlen(henkan));
+			_stprintf_s(convertStringBuffer, 200, TEXT("絶対値: %d"), (int)absolute1); // デバッグ用メッセージ 絶対値のつもり
+			TextOut(hdc, debugMx1, debugMy + 30, convertStringBuffer, lstrlen(convertStringBuffer));
 
 			int bufseisuu = (int)100 * costheta2;
 
-			_stprintf_s(henkan, 200, TEXT("100 cosθ2: %d"), bufseisuu); // デバッグ用メッセージ cosθのつもり
-			TextOut(hdc, debugMx1,  debugMy + 60, henkan, lstrlen(henkan));
+			_stprintf_s(convertStringBuffer, 200, TEXT("100 cosθ2: %d"), bufseisuu); // デバッグ用メッセージ cosθのつもり
+			TextOut(hdc, debugMx1,  debugMy + 60, convertStringBuffer, lstrlen(convertStringBuffer));
 
 
 			bufseisuu = (int)100 * theta2;
-			_stprintf_s(henkan, 200, TEXT("100 θ2: %d"), (int)bufseisuu); // デバッグ用メッセージ 角度θのつもり
-			TextOut(hdc, debugMx1, debugMy + 90, henkan, lstrlen(henkan));
+			_stprintf_s(convertStringBuffer, 200, TEXT("100 θ2: %d"), (int)bufseisuu); // デバッグ用メッセージ 角度θのつもり
+			TextOut(hdc, debugMx1, debugMy + 90, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			bufseisuu = (int)100 * bairitu2;
-			_stprintf_s(henkan, 200, TEXT("倍率2: %d"), (int)bufseisuu); // デバッグ用メッセージ 角度θのつもり
-			TextOut(hdc, debugMx1, debugMy + 120, henkan, lstrlen(henkan));
+			bufseisuu = (int)100 * magnification2;
+			_stprintf_s(convertStringBuffer, 200, TEXT("倍率2: %d"), (int)bufseisuu); // デバッグ用メッセージ 角度θのつもり
+			TextOut(hdc, debugMx1, debugMy + 120, convertStringBuffer, lstrlen(convertStringBuffer));
 
 
 
@@ -436,45 +441,45 @@ now_movewhat = moveCamera ;
 			// Y軸の拡大率の計算デバッグ用
 			int debugMx2 = 600;
 
-			_stprintf_s(henkan, 200, TEXT("内積: %d"), (int)naisekiZY1); // デバッグ用メッセージ 内積のつもり
-			TextOut(hdc, debugMx2, debugMy, henkan, lstrlen(henkan));
+			_stprintf_s(convertStringBuffer, 200, TEXT("内積: %d"), (int)naisekiZY1); // デバッグ用メッセージ 内積のつもり
+			TextOut(hdc, debugMx2, debugMy, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			_stprintf_s(henkan, 200, TEXT("絶対値: %d"), (int)zettaiZY1); // デバッグ用メッセージ 絶対値のつもり
-			TextOut(hdc, debugMx2, debugMy +30 , henkan, lstrlen(henkan));
+			_stprintf_s(convertStringBuffer, 200, TEXT("絶対値: %d"), (int)absoluteZY1); // デバッグ用メッセージ 絶対値のつもり
+			TextOut(hdc, debugMx2, debugMy +30 , convertStringBuffer, lstrlen(convertStringBuffer));
 
 			bufseisuu = (int)100 * costhetaZY2;
 
-			_stprintf_s(henkan, 200, TEXT("100 cosθ2: %d"), bufseisuu); // デバッグ用メッセージ cosθのつもり
-			TextOut(hdc, debugMx2, debugMy +60, henkan, lstrlen(henkan));
+			_stprintf_s(convertStringBuffer, 200, TEXT("100 cosθ2: %d"), bufseisuu); // デバッグ用メッセージ cosθのつもり
+			TextOut(hdc, debugMx2, debugMy +60, convertStringBuffer, lstrlen(convertStringBuffer));
 
 
 			bufseisuu = (int)100 * thetaZY2;
-			_stprintf_s(henkan, 200, TEXT("100 θ2: %d"), (int)bufseisuu); // デバッグ用メッセージ 角度θのつもり
-			TextOut(hdc, debugMx2, debugMy + 90, henkan, lstrlen(henkan));
+			_stprintf_s(convertStringBuffer, 200, TEXT("100 θ2: %d"), (int)bufseisuu); // デバッグ用メッセージ 角度θのつもり
+			TextOut(hdc, debugMx2, debugMy + 90, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			bufseisuu = (int)100 * bairituZY2;
-			_stprintf_s(henkan, 200, TEXT("倍率2: %d"), (int)bufseisuu); // デバッグ用メッセージ 角度θのつもり
-			TextOut(hdc, debugMx2, debugMy + 120, henkan, lstrlen(henkan));
+			bufseisuu = (int)100 * magnificationZY2;
+			_stprintf_s(convertStringBuffer, 200, TEXT("倍率2: %d"), (int)bufseisuu); // デバッグ用メッセージ 角度θのつもり
+			TextOut(hdc, debugMx2, debugMy + 120, convertStringBuffer, lstrlen(convertStringBuffer));
 
 
 
 			// 視界
 
-			int kuroXkiten = 20 ;
-			int kutoYkiten = 70 ;
+			int blackXstartPoint = 20 ;
+			int kutoYstartPoint = 70 ;
 
-			int kuroXhaba = 150 ;
-			int kutoYhaba = 100 ;
+			int blackXWidth = 150 ;
+			int kutoYWidth = 100 ;
 
 
 			HBRUSH brasi_buhin_1;
 			brasi_buhin_1 = CreateSolidBrush(RGB(0, 0, 0)); // 黒色のブラシを作成。背景用。
 			SelectObject(hdc, brasi_buhin_1); // ウィンドウhdcと、さきほど作成したブラシを関連づけ
-			Rectangle(hdc, kuroXkiten, kutoYkiten, kuroXkiten + kuroXhaba, kutoYkiten + kutoYhaba); // 図形の描画
+			Rectangle(hdc, blackXstartPoint, kutoYstartPoint, blackXstartPoint + blackXWidth, kutoYstartPoint + kutoYWidth); // 図形の描画
 
 
-			int kuroXtyuo = kuroXkiten + ( kuroXhaba / 2) ;
-			int kuroYtyuo = kutoYkiten + ( kutoYhaba / 2) ;
+			int blackXcentral = blackXstartPoint + ( blackXWidth / 2) ;
+			int blackYcentral = kutoYstartPoint + ( kutoYWidth / 2) ;
 
 
 			int tyousei = 3; // 単に、ピンク壁の初期位置での、視界での大きさを調整するための係数。
@@ -482,16 +487,16 @@ now_movewhat = moveCamera ;
 			HBRUSH brasi_buhin_2;
 			brasi_buhin_2 = CreateSolidBrush(RGB(255, 100, 100)); // 壁の表示用のピンク色のブラシを作成
 			SelectObject(hdc, brasi_buhin_2); // ウィンドウhdcと、さきほど作成したブラシを関連づけ
-			// Rectangle(hdc, ((20+170)/2) - 20 * bairitu1 -zure_X, 50 +40, ((20 + 170) / 2) + 20 * bairitu1 - zure_X, 100 +40 ); // 図形の描画
+			// Rectangle(hdc, ((20+170)/2) - 20 * magnification1 -zure_X, 50 +40, ((20 + 170) / 2) + 20 * magnification1 - zure_X, 100 +40 ); // 図形の描画
 			Rectangle(hdc,
-				kuroXtyuo - tyousei * bairitu2,
-				kuroYtyuo - tyousei * bairituZY2,
-				kuroXtyuo - tyousei * bairitu3 ,
-				kuroYtyuo - tyousei * bairituZY3 ); // 基準の状態
+				blackXcentral - tyousei * magnification2,
+				blackYcentral - tyousei * magnificationZY2,
+				blackXcentral - tyousei * magnification3 ,
+				blackYcentral - tyousei * magnificationZY3 ); // 基準の状態
 
 
-			lstrcpy(mojibuf, TEXT("視界"));
-			TextOut(hdc, 80, 30, mojibuf, lstrlen(mojibuf));
+			lstrcpy(WordBuffer, TEXT("視界"));
+			TextOut(hdc, 80, 30, WordBuffer, lstrlen(WordBuffer));
 
 
 
@@ -512,20 +517,20 @@ now_movewhat = moveCamera ;
 
 			//カメラの位置と向き。矢印の先端を位置の基準とする。
 
-			MoveToEx(hdc, ya_sentan_X , ya_sentan_Z, NULL);
-			LineTo(hdc, ya_syuutan_X , ya_syuutan_Z );
+			MoveToEx(hdc, arrow_Head_X , arrow_Head_Z, NULL);
+			LineTo(hdc, arrow_Bottom_X , arrow_Bottom_Z );
 
-			MoveToEx(hdc, ya_sentan_X , ya_sentan_Z, NULL);
-			LineTo(hdc, ya_sentan_X  +20, ya_sentan_Z + 20);
-
-
-
-			MoveToEx(hdc, ya_sentan_X , ya_sentan_Z, NULL);
-			LineTo(hdc, ya_sentan_X - 20, ya_sentan_Z + 20);
+			MoveToEx(hdc, arrow_Head_X , arrow_Head_Z, NULL);
+			LineTo(hdc, arrow_Head_X  +20, arrow_Head_Z + 20);
 
 
-			lstrcpy(mojibuf, TEXT("上面図"));
-			TextOut(hdc, 280, 30, mojibuf, lstrlen(mojibuf));
+
+			MoveToEx(hdc, arrow_Head_X , arrow_Head_Z, NULL);
+			LineTo(hdc, arrow_Head_X - 20, arrow_Head_Z + 20);
+
+
+			lstrcpy(WordBuffer, TEXT("上面図"));
+			TextOut(hdc, 280, 30, WordBuffer, lstrlen(WordBuffer));
 
 
 
@@ -546,10 +551,10 @@ now_movewhat = moveCamera ;
 				switch (wParam) {
 				case VK_UP:
 				{
-					ya_sentan_Z = ya_sentan_Z - 5;
-					ya_syuutan_Z = ya_syuutan_Z - 5;
+					arrow_Head_Z = arrow_Head_Z - 5;
+					arrow_Bottom_Z = arrow_Bottom_Z - 5;
 
-					camZ = ya_sentan_Z;
+					camZ = arrow_Head_Z;
 
 					InvalidateRect(hWnd, NULL, TRUE);
 					UpdateWindow(hWnd);
@@ -560,10 +565,10 @@ now_movewhat = moveCamera ;
 
 				case VK_DOWN:
 				{
-					ya_sentan_Z = ya_sentan_Z + 5;
-					ya_syuutan_Z = ya_syuutan_Z + 5;
+					arrow_Head_Z = arrow_Head_Z + 5;
+					arrow_Bottom_Z = arrow_Bottom_Z + 5;
 
-					camZ = ya_sentan_Z;
+					camZ = arrow_Head_Z;
 
 					InvalidateRect(hWnd, NULL, TRUE);
 					UpdateWindow(hWnd);
@@ -573,10 +578,10 @@ now_movewhat = moveCamera ;
 
 				case VK_RIGHT:
 				{
-					ya_sentan_X = ya_sentan_X + 5;
-					ya_syuutan_X = ya_syuutan_X + 5;
+					arrow_Head_X = arrow_Head_X + 5;
+					arrow_Bottom_X = arrow_Bottom_X + 5;
 
-					camX = ya_sentan_X;
+					camX = arrow_Head_X;
 
 					InvalidateRect(hWnd, NULL, TRUE);
 					UpdateWindow(hWnd);
@@ -586,10 +591,10 @@ now_movewhat = moveCamera ;
 
 				case VK_LEFT:
 				{
-					ya_sentan_X = ya_sentan_X - 5;
-					ya_syuutan_X = ya_syuutan_X - 5;
+					arrow_Head_X = arrow_Head_X - 5;
+					arrow_Bottom_X = arrow_Bottom_X - 5;
 
-					camX = ya_sentan_X;
+					camX = arrow_Head_X;
 
 					InvalidateRect(hWnd, NULL, TRUE);
 					UpdateWindow(hWnd);
@@ -604,6 +609,12 @@ now_movewhat = moveCamera ;
 					InvalidateRect(hWnd, NULL, TRUE);
 					UpdateWindow(hWnd);
 
+
+					arrow_Head_X0rot = arrow_Head_X;
+					arrow_Head_Z0rot = arrow_Head_Z;
+
+
+
 					break;
 				}
 				break;
@@ -613,8 +624,8 @@ now_movewhat = moveCamera ;
 
 			if (now_movetype == moveRotate) {
 
-				ya_rot_centerX = ya_syuutan_X ;
-				ya_rot_centerZ = ya_syuutan_Z ;
+				arrow_rot_centerX = arrow_Bottom_X ;
+				arrow_rot_centerZ = arrow_Bottom_Z ;
 				
 				switch (wParam)
 				{
@@ -622,23 +633,23 @@ now_movewhat = moveCamera ;
 
 				case VK_RIGHT:
 				{
-					// ya_sentan_X = ya_sentan_X + 5;
+					// arrow_Head_X = arrow_Head_X + 5;
 
 
-					double kakuTyousei = +0.05;
+					double angleStep = +0.05;
 
-					// kakuKeisuu = kakuKeisuu + 1;			
-					kakuRuiseki = kakuKeisuu * kakuTyousei;
+					angleCoefficient = angleCoefficient + 1;			
+					angleAccumulation = angleCoefficient * angleStep;
 
 
-					ya_sentan_Xdelta = cos(kakuRuiseki) * (ya_sentan_X - ya_rot_centerX) + (-1) * sin(kakuRuiseki) * (ya_sentan_Z - ya_rot_centerZ);
-					ya_sentan_Zdelta = sin(kakuRuiseki) * (ya_sentan_X - ya_rot_centerX) + cos(kakuRuiseki) * (ya_sentan_Z - ya_rot_centerZ);
+					arrow_Head_Xdelta = cos(angleAccumulation) * (arrow_Head_X0rot - arrow_rot_centerX) + (-1) * sin(angleAccumulation) * (arrow_Head_Z0rot - arrow_rot_centerZ);
+					arrow_Head_Zdelta = sin(angleAccumulation) * (arrow_Head_X0rot - arrow_rot_centerX) + cos(angleAccumulation) * (arrow_Head_Z0rot - arrow_rot_centerZ);
 
-					ya_sentan_X = (int) (ya_rot_centerX + ya_sentan_Xdelta) ;
-					ya_sentan_Z = (int) (ya_rot_centerZ + ya_sentan_Zdelta) ;
+					arrow_Head_X = (int) (arrow_rot_centerX + arrow_Head_Xdelta) ;
+					arrow_Head_Z = (int) (arrow_rot_centerZ + arrow_Head_Zdelta) ;
 
-					camX = ya_sentan_X;
-					camZ = ya_sentan_Z;
+					camX = arrow_Head_X;
+					camZ = arrow_Head_Z;
 
 					InvalidateRect(hWnd, NULL, TRUE);
 					UpdateWindow(hWnd);
@@ -649,17 +660,20 @@ now_movewhat = moveCamera ;
 				case VK_LEFT:
 				{
 
-					double kakuTyousei = -0.05;
+					double angleStep = 0.05;
 
-					ya_sentan_Xdelta = cos(kakuTyousei) * (ya_sentan_X - ya_rot_centerX) + (-1) * sin(kakuTyousei) * (ya_sentan_Z - ya_rot_centerZ);
-					ya_sentan_Zdelta = sin(kakuTyousei) * (ya_sentan_X - ya_rot_centerX) + cos(kakuTyousei) * (ya_sentan_Z - ya_rot_centerZ);
-
-					ya_sentan_X = (int)(ya_rot_centerX + ya_sentan_Xdelta);
-					ya_sentan_Z = (int)(ya_rot_centerZ + ya_sentan_Zdelta);
+					angleCoefficient = angleCoefficient - 1;
+					angleAccumulation = angleCoefficient * angleStep;
 
 
-					camX = ya_sentan_X;
-					camZ = ya_sentan_Z;
+					arrow_Head_Xdelta = cos(angleAccumulation) * (arrow_Head_X0rot - arrow_rot_centerX) + (-1) * sin(angleAccumulation) * (arrow_Head_Z0rot - arrow_rot_centerZ);
+					arrow_Head_Zdelta = sin(angleAccumulation) * (arrow_Head_X0rot - arrow_rot_centerX) + cos(angleAccumulation) * (arrow_Head_Z0rot - arrow_rot_centerZ);
+
+					arrow_Head_X = (int)(arrow_rot_centerX + arrow_Head_Xdelta);
+					arrow_Head_Z = (int)(arrow_rot_centerZ + arrow_Head_Zdelta);
+
+					camX = arrow_Head_X;
+					camZ = arrow_Head_Z;
 
 					InvalidateRect(hWnd, NULL, TRUE);
 					UpdateWindow(hWnd);

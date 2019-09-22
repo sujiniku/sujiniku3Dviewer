@@ -130,6 +130,41 @@ enum move_type
 enum move_type now_movetype = moveParallel ;
 
 
+
+
+
+
+struct seisekihyou {
+	int vecCamWall_StartX;
+	int vecCamWall_StartZ ; // カメラから起点に向かうベクトルa
+	int vecCamWall_EndX ;
+	int vecCamWall_1_EndZ ; // カメラから終点に向かうベクトルb
+
+
+	int Wall_Yunder ; 
+	int Wall_Ytop; 
+
+	int Wall_Z;
+	
+
+	int vecCamWall_UnderZ;	
+	int vecCamWall_TopZ;
+	
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
 // このコード モジュールに含まれる関数の宣言を転送します:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -381,37 +416,37 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			float ThetaWall_1_EB_ZY = (float) acos( cosThetaWall_1_EB_ZY );
 
 
-			float ThetaAB_XZ = (float) acos( cosThetaWall_1_AB_XZ ) ;
-			float ThetaAE_XZ = (float) acos( cosThetaWall_1_AE_XZ );
-			float ThetaEB_XZ = (float) acos( cosThetaWall_1_EB_XZ ) ;
+			float ThetaWall_1_AB_XZ = (float) acos( cosThetaWall_1_AB_XZ ) ;
+			float ThetaWall_1_AE_XZ = (float) acos( cosThetaWall_1_AE_XZ );
+			float ThetaWall_1_EB_XZ = (float) acos( cosThetaWall_1_EB_XZ ) ;
 
 
 
 
-			float ThetaAE_XZwithCamera = ThetaAE_XZ + angleAccumulation ;
+			float ThetaWall_1_AE_XZwithCamera = ThetaWall_1_AE_XZ + angleAccumulation ;
 
-			float ThetaEB_XZwithCamera = ThetaEB_XZ + angleAccumulation ;
+			float ThetaWall_1_EB_XZwithCamera = ThetaWall_1_EB_XZ + angleAccumulation ;
 
 
-			float angleAE_Buf1 = cos(ThetaAE_XZwithCamera) ;
+			float angleAE_Buf1 = cos(ThetaWall_1_AE_XZwithCamera) ;
 			float angleAE_Buf2 = acos(angleAE_Buf1) ;
 
 
-			float angleEB_Buf1 = cos(ThetaEB_XZwithCamera);
+			float angleEB_Buf1 = cos(ThetaWall_1_EB_XZwithCamera);
 			float angleEB_Buf2 = acos(angleEB_Buf1);
 
 
-			float magnificationAB_XZ = ThetaAB_XZ / 0.3 ;
-			float magnificationAB_ZY = ThetaWall_1_AB_ZY / 0.3;
+			float magnificationWall_1_AB_XZ = ThetaWall_1_AB_XZ / 0.3 ;
+			float magnificationWall_1_AB_ZY = ThetaWall_1_AB_ZY / 0.3;
 
 
 			double Pi = 3.141 ;
 
-			double magnificationAE_XZ = (angleAE_Buf2 - (Pi / 2) ) / 0.1;
-			double magnificationEB_XZ = (angleEB_Buf2 - (Pi / 2) ) / 0.1 ;
+			double magnificationWall_1_AE_XZ = (angleAE_Buf2 - (Pi / 2) ) / 0.1;
+			double magnificationWall_1_EB_XZ = (angleEB_Buf2 - (Pi / 2) ) / 0.1 ;
 
-			double magnificationAE_ZY = (ThetaWall_1_AE_ZY - Pi / 2) / 0.1;
-			double magnificationEB_ZY = (ThetaWall_1_EB_ZY - Pi / 2) / 0.1;
+			double magnificationWall_1_AE_ZY = (ThetaWall_1_AE_ZY - Pi / 2) / 0.1;
+			double magnificationWall_1_EB_ZY = (ThetaWall_1_EB_ZY - Pi / 2) / 0.1;
 
 
 			// now_movewhat = moveCamera ;
@@ -473,11 +508,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			TextOut(hdc, debugMx1,  debugMy + 60, convertStringBuffer, lstrlen(convertStringBuffer));
 
 
-			bufSeisuu = (int)100 * ThetaAE_XZ;
+			bufSeisuu = (int)100 * ThetaWall_1_AE_XZ;
 			_stprintf_s(convertStringBuffer, 200, TEXT("100 θ2: %d"), (int)bufSeisuu); // デバッグ用メッセージ 角度θのつもり
 			TextOut(hdc, debugMx1, debugMy + 90, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			bufSeisuu = (int)100 * magnificationAE_XZ;
+			bufSeisuu = (int)100 * magnificationWall_1_AE_XZ;
 			_stprintf_s(convertStringBuffer, 200, TEXT("倍率2: %d"), (int)bufSeisuu); // デバッグ用メッセージ 角度θのつもり
 			TextOut(hdc, debugMx1, debugMy + 120, convertStringBuffer, lstrlen(convertStringBuffer));
 
@@ -503,7 +538,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			_stprintf_s(convertStringBuffer, 200, TEXT("100 θ2: %d"), (int)bufSeisuu); // デバッグ用メッセージ 角度θのつもり
 			TextOut(hdc, debugMx2, debugMy + 90, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			bufSeisuu = (int)100 * magnificationAE_ZY;
+			bufSeisuu = (int)100 * magnificationWall_1_AE_ZY;
 			_stprintf_s(convertStringBuffer, 200, TEXT("倍率2: %d"), (int)bufSeisuu); // デバッグ用メッセージ 角度θのつもり
 			TextOut(hdc, debugMx2, debugMy + 120, convertStringBuffer, lstrlen(convertStringBuffer));
 
@@ -528,17 +563,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int blackYcentral = blackYstartPoint + ( blackYWidth / 2) ;
 
 
-			int tyousei = 3; // 単に、ピンク壁の初期位置での、視界での大きさを調整するための係数。
+			int adjustParam = 3; // 単に、ピンク壁の初期位置での、視界での大きさを調整するための係数。
 
 			HBRUSH brasi_parts_2;
 			brasi_parts_2 = CreateSolidBrush(RGB(255, 100, 100)); // 壁の表示用のピンク色のブラシを作成
 			SelectObject(hdc, brasi_parts_2); // ウィンドウhdcと、さきほど作成したブラシを関連づけ
 			
 			Rectangle(hdc,
-				blackXcentral - tyousei * magnificationAE_XZ,
-				blackYcentral - tyousei * magnificationAE_ZY,
-				blackXcentral - tyousei * magnificationEB_XZ ,
-				blackYcentral - tyousei * magnificationEB_ZY ); // 基準の状態
+				blackXcentral - adjustParam * magnificationWall_1_AE_XZ,
+				blackYcentral - adjustParam * magnificationWall_1_AE_ZY,
+				blackXcentral - adjustParam * magnificationWall_1_EB_XZ ,
+				blackYcentral - adjustParam * magnificationWall_1_EB_ZY ); // 基準の状態
 
 
 			lstrcpy(WordBuffer, TEXT("視界"));

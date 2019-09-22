@@ -79,20 +79,20 @@ int arrow_rot_centerX = arrow_center_X;
 int arrow_rot_centerZ = arrow_center_Z;
 
 
-int wall1startLineX = 280; int wall1startLineZ=80;
-int wall1endLineX = 320; int wall1endLineZ=80;
+int wall_1_startLineX = 280; int wall_1_startLineZ=80;
+int wall_1_endLineX = 320; int wall_1_endLineZ=80;
 
-int wall1Width = wall1endLineX- wall1startLineX; // 40
-int wall1Height = 100;
+int wall_1_Width = wall_1_endLineX- wall_1_startLineX; // 40
+int wall_1_Height = 100;
 
 
 
-int wall2startLineX = 320;
-int wall2endLineX = 320;
+int wall_2_startLineX = 320;
+int wall_2_endLineX = 320;
 
-int wall2startLineZ = 80;
-int wall2endLineZ = 60;
-int wall2Height = 100;
+int wall_2_startLineZ = 80;
+int wall_2_endLineZ = 60;
+int wall_2_Height = 100;
 
 
 
@@ -270,19 +270,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			static TCHAR convertStringBuffer[50]; // 文字列を格納するための変数 convertStringBuffer を準備
 
 
-			int vecCamWall1StartX = wall1startLineX - camX ; int vecCamWall1StartZ = wall1startLineZ - camZ ; // カメラから起点に向かうベクトルa
-			int vecCamWall1EndX = wall1endLineX - camX ; int vecCamWall1EndZ = wall1endLineZ - camZ; // カメラから終点に向かうベクトルb
+			int vecCamwall_1_StartX = wall_1_startLineX - camX ; int vecCamwall_1_StartZ = wall_1_startLineZ - camZ ; // カメラから起点に向かうベクトルa
+			int vecCamwall_1_EndX = wall_1_endLineX - camX ; int vecCamwall_1_EndZ = wall_1_endLineZ - camZ; // カメラから終点に向かうベクトルb
 
 
 
-			int wall1Yunder = 0; int wall1Ytop = wall1Yunder + wall1Height ; // 高さはY軸にしている。
+			int wall_1_Yunder = 0; int wall_1_Ytop = wall_1_Yunder + wall_1_Height ; // 高さはY軸にしている。
 
-			int wall1Z = wall1startLineZ; // 壁のZ位置は、wall1startLineZで代用した。
+			int wall_1_Z = wall_1_startLineZ; // 壁のZ位置は、wall_1_startLineZで代用した。
 
 
 
-			int vecCamWall1UnderZ = wall1Z - camZ; int vecCamWall1UnderY = wall1Yunder - camY; // カメラから壁下に向かうベクトル
-			int vecCamWall1TopZ = wall1Z - camZ; int vecCamWall1TopY = wall1Ytop - camY; // カメラから壁上に向かうベクトル
+			int vecCamwall_1_UnderZ = wall_1_Z - camZ; int vecCamwall_1_UnderY = wall_1_Yunder - camY; // カメラから壁下に向かうベクトル
+			int vecCamwall_1_TopZ = wall_1_Z - camZ; int vecCamwall_1_TopY = wall_1_Ytop - camY; // カメラから壁上に向かうベクトル
 
 
 
@@ -294,10 +294,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			TextOut(hdc, 450, 160, convertStringBuffer, lstrlen(convertStringBuffer));
 			
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("壁下Y: %d"), wall1Yunder); // デバッグ用メッセージ 
+			_stprintf_s(convertStringBuffer, 200, TEXT("壁下Y: %d"), wall_1_Yunder); // デバッグ用メッセージ 
 			TextOut(hdc, 450, 160+20, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("カメラ → 壁下Y: %d"), vecCamWall1UnderY); // デバッグ用メッセージ 
+			_stprintf_s(convertStringBuffer, 200, TEXT("カメラ → 壁下Y: %d"), vecCamwall_1_UnderY); // デバッグ用メッセージ 
 			TextOut(hdc, 450, 160+20+20, convertStringBuffer, lstrlen(convertStringBuffer));
 
 
@@ -306,10 +306,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			_stprintf_s(convertStringBuffer, 200, TEXT("カメラZ: %d"), camZ); // デバッグ用メッセージ 
 			TextOut(hdc, 650, 160, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("壁Z: %d"), wall1Z); // デバッグ用メッセージ 
+			_stprintf_s(convertStringBuffer, 200, TEXT("壁Z: %d"), wall_1_Z); // デバッグ用メッセージ 
 			TextOut(hdc, 650, 160 + 20, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("カメラ → 壁Z: %d"), vecCamWall1UnderZ); // デバッグ用メッセージ 
+			_stprintf_s(convertStringBuffer, 200, TEXT("カメラ → 壁Z: %d"), vecCamwall_1_UnderZ); // デバッグ用メッセージ 
 			TextOut(hdc, 650, 160 + 20 + 20, convertStringBuffer, lstrlen(convertStringBuffer));
 
 
@@ -317,73 +317,73 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			// int vec_unitX_x = 1; int vec_unitX_y = 0; // x方向（画面で右側）を向いている単位ベクトルの成分
 
 
-			double InnerWall1AB_XZ = vecCamWall1StartX * vecCamWall1EndX + vecCamWall1StartZ * vecCamWall1EndZ ;  // 内積a・b
-			double InnerWall1AE_XZ = vecCamWall1StartX * 1 ;  // 内積a・unitX
-			double InnerWAll1EB_XZ = vecCamWall1EndX * 1 ;  // 内積 unitX・b
+			double Innerwall_1_AB_XZ = vecCamwall_1_StartX * vecCamwall_1_EndX + vecCamwall_1_StartZ * vecCamwall_1_EndZ ;  // 内積a・b
+			double Innerwall_1_AE_XZ = vecCamwall_1_StartX * 1 ;  // 内積a・unitX
+			double Innerwall_1_EB_XZ = vecCamwall_1_EndX * 1 ;  // 内積 unitX・b
 
 
 		
 			// int vec_unitY_y = 1; int vec_unitY_z = 0; // y方向（画面からユーザーの向き）を向いている単位ベクトルの成分
 
-			double InnerWall1AB_ZY = vecCamWall1UnderZ * vecCamWall1TopZ + vecCamWall1UnderY * vecCamWall1TopY;  // ZY側面の内積a・b
-			double InnerWall1AE_ZY = vecCamWall1UnderY * 1 ;  // 内積a・unitY
-			double InnerWall1EB_ZY = vecCamWall1TopY * 1 ;  // 内積 unitY・b
+			double Innerwall_1_AB_ZY = vecCamwall_1_UnderZ * vecCamwall_1_TopZ + vecCamwall_1_UnderY * vecCamwall_1_TopY;  // ZY側面の内積a・b
+			double Innerwall_1_AE_ZY = vecCamwall_1_UnderY * 1 ;  // 内積a・unitY
+			double Innerwall_1_EB_ZY = vecCamwall_1_TopY * 1 ;  // 内積 unitY・b
 
 
 
-			double absoluteWall1AB_ZY = sqrt(
-				(vecCamWall1UnderZ * vecCamWall1UnderZ + vecCamWall1UnderY * vecCamWall1UnderY) * (vecCamWall1TopZ * vecCamWall1TopZ + vecCamWall1TopY * vecCamWall1TopY)
+			double absolutewall_1_AB_ZY = sqrt(
+				(vecCamwall_1_UnderZ * vecCamwall_1_UnderZ + vecCamwall_1_UnderY * vecCamwall_1_UnderY) * (vecCamwall_1_TopZ * vecCamwall_1_TopZ + vecCamwall_1_TopY * vecCamwall_1_TopY)
 			); // 絶対値|a| |b|
 
 
-	//		_stprintf_s(convertStringBuffer, 200, TEXT("%d"), (int)absoluteWall1AB_ZY); // デバッグ用メッセージ absoluteWall1AB_ZY のつもり
+	//		_stprintf_s(convertStringBuffer, 200, TEXT("%d"), (int)absolutewall_1_AB_ZY); // デバッグ用メッセージ absolutewall_1_AB_ZY のつもり
 	//		TextOut(hdc, 650, 415, convertStringBuffer, lstrlen(convertStringBuffer));
 
 
 
-			double absoluteWall1AE_ZY = sqrt(
-				(vecCamWall1UnderZ * vecCamWall1UnderZ + vecCamWall1UnderY * vecCamWall1UnderY) * 1
+			double absolutewall_1_AE_ZY = sqrt(
+				(vecCamwall_1_UnderZ * vecCamwall_1_UnderZ + vecCamwall_1_UnderY * vecCamwall_1_UnderY) * 1
 			); // 絶対値|a| |1|
 
 
-			double absoluteWall1EB_ZY = sqrt(
-				(vecCamWall1TopZ * vecCamWall1TopZ + vecCamWall1TopY * vecCamWall1TopY) * 1
+			double absolutewall_1_EB_ZY = sqrt(
+				(vecCamwall_1_TopZ * vecCamwall_1_TopZ + vecCamwall_1_TopY * vecCamwall_1_TopY) * 1
 			); // 絶対値|b| |1|
 
 
 
-			double absoluteWall1AB_XZ = sqrt (
-							(vecCamWall1StartX * vecCamWall1StartX + vecCamWall1StartZ * vecCamWall1StartZ ) * (vecCamWall1EndX * vecCamWall1EndX + vecCamWall1EndZ * vecCamWall1EndZ )   
+			double absolutewall_1_AB_XZ = sqrt (
+							(vecCamwall_1_StartX * vecCamwall_1_StartX + vecCamwall_1_StartZ * vecCamwall_1_StartZ ) * (vecCamwall_1_EndX * vecCamwall_1_EndX + vecCamwall_1_EndZ * vecCamwall_1_EndZ )   
 							)  ; // 絶対値|a| |b|
 
 
-			double absoluteWall1AE_XZ = sqrt(
-				(vecCamWall1StartX * vecCamWall1StartX + vecCamWall1StartZ * vecCamWall1StartZ) * 1
+			double absolutewall_1_AE_XZ = sqrt(
+				(vecCamwall_1_StartX * vecCamwall_1_StartX + vecCamwall_1_StartZ * vecCamwall_1_StartZ) * 1
 			); // 絶対値|a| |1|
 
 
-			double absoluteWAll1EB_XZ = sqrt(
-				(vecCamWall1EndX * vecCamWall1EndX + vecCamWall1EndZ * vecCamWall1EndZ) * 1
+			double absolutewall_1_EB_XZ = sqrt(
+				(vecCamwall_1_EndX * vecCamwall_1_EndX + vecCamwall_1_EndZ * vecCamwall_1_EndZ) * 1
 			); // 絶対値|b| |1|
 
 
-			double cosThetaWall1AB_ZY = InnerWall1AB_ZY / absoluteWall1AB_ZY;
-			double cosThetaWall1AE_ZY = InnerWall1AE_ZY / absoluteWall1AE_ZY;
-			double cosThetaWall1EB_ZY = InnerWall1EB_ZY / absoluteWall1EB_ZY;
+			double cosThetawall_1_AB_ZY = Innerwall_1_AB_ZY / absolutewall_1_AB_ZY;
+			double cosThetawall_1_AE_ZY = Innerwall_1_AE_ZY / absolutewall_1_AE_ZY;
+			double cosThetawall_1_EB_ZY = Innerwall_1_EB_ZY / absolutewall_1_EB_ZY;
 
-			double cosThetaWall1AB_XZ = InnerWall1AB_XZ / absoluteWall1AB_XZ   ;
-			double cosThetaWall1AE_XZ = InnerWall1AE_XZ / absoluteWall1AE_XZ  ;
-			double cosThetaWall1EB_XZ = InnerWAll1EB_XZ / absoluteWAll1EB_XZ ;
-
-
-			float ThetaWall1AB_ZY = (float) acos( cosThetaWall1AB_ZY );
-			float ThetaWall1AE_ZY = (float) acos( cosThetaWall1AE_ZY );
-			float ThetaWall1EB_ZY = (float) acos( cosThetaWall1EB_ZY );
+			double cosThetawall_1_AB_XZ = Innerwall_1_AB_XZ / absolutewall_1_AB_XZ   ;
+			double cosThetawall_1_AE_XZ = Innerwall_1_AE_XZ / absolutewall_1_AE_XZ  ;
+			double cosThetawall_1_EB_XZ = Innerwall_1_EB_XZ / absolutewall_1_EB_XZ ;
 
 
-			float ThetaAB_XZ = (float) acos( cosThetaWall1AB_XZ ) ;
-			float ThetaAE_XZ = (float) acos( cosThetaWall1AE_XZ );
-			float ThetaEB_XZ = (float) acos( cosThetaWall1EB_XZ ) ;
+			float Thetawall_1_AB_ZY = (float) acos( cosThetawall_1_AB_ZY );
+			float Thetawall_1_AE_ZY = (float) acos( cosThetawall_1_AE_ZY );
+			float Thetawall_1_EB_ZY = (float) acos( cosThetawall_1_EB_ZY );
+
+
+			float ThetaAB_XZ = (float) acos( cosThetawall_1_AB_XZ ) ;
+			float ThetaAE_XZ = (float) acos( cosThetawall_1_AE_XZ );
+			float ThetaEB_XZ = (float) acos( cosThetawall_1_EB_XZ ) ;
 
 
 
@@ -402,7 +402,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 			float magnificationAB_XZ = ThetaAB_XZ / 0.3 ;
-			float magnificationAB_ZY = ThetaWall1AB_ZY / 0.3;
+			float magnificationAB_ZY = Thetawall_1_AB_ZY / 0.3;
 
 
 			double Pi = 3.141 ;
@@ -410,8 +410,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			double magnificationAE_XZ = (angleAE_Buf2 - (Pi / 2) ) / 0.1;
 			double magnificationEB_XZ = (angleEB_Buf2 - (Pi / 2) ) / 0.1 ;
 
-			double magnificationAE_ZY = (ThetaWall1AE_ZY - Pi / 2) / 0.1;
-			double magnificationEB_ZY = (ThetaWall1EB_ZY - Pi / 2) / 0.1;
+			double magnificationAE_ZY = (Thetawall_1_AE_ZY - Pi / 2) / 0.1;
+			double magnificationEB_ZY = (Thetawall_1_EB_ZY - Pi / 2) / 0.1;
 
 
 			// now_movewhat = moveCamera ;
@@ -461,13 +461,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			int debugMx1 = 300 ; int debugMy = 300;
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("内積: %d"), (int)InnerWall1AB_XZ); // デバッグ用メッセージ 内積のつもり
+			_stprintf_s(convertStringBuffer, 200, TEXT("内積: %d"), (int)Innerwall_1_AB_XZ); // デバッグ用メッセージ 内積のつもり
 			TextOut(hdc, debugMx1, debugMy, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("絶対値: %d"), (int)absoluteWall1AB_XZ); // デバッグ用メッセージ 絶対値のつもり
+			_stprintf_s(convertStringBuffer, 200, TEXT("絶対値: %d"), (int)absolutewall_1_AB_XZ); // デバッグ用メッセージ 絶対値のつもり
 			TextOut(hdc, debugMx1, debugMy + 30, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			int bufSeisuu = (int)100 * cosThetaWall1AE_XZ;
+			int bufSeisuu = (int)100 * cosThetawall_1_AE_XZ;
 
 			_stprintf_s(convertStringBuffer, 200, TEXT("100 cosθ2: %d"), bufSeisuu); // デバッグ用メッセージ cosθのつもり
 			TextOut(hdc, debugMx1,  debugMy + 60, convertStringBuffer, lstrlen(convertStringBuffer));
@@ -487,19 +487,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			// Y軸の拡大率の計算デバッグ用
 			int debugMx2 = 600;
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("内積: %d"), (int)InnerWall1AB_ZY); // デバッグ用メッセージ 内積のつもり
+			_stprintf_s(convertStringBuffer, 200, TEXT("内積: %d"), (int)Innerwall_1_AB_ZY); // デバッグ用メッセージ 内積のつもり
 			TextOut(hdc, debugMx2, debugMy, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("絶対値: %d"), (int)absoluteWall1AB_ZY); // デバッグ用メッセージ 絶対値のつもり
+			_stprintf_s(convertStringBuffer, 200, TEXT("絶対値: %d"), (int)absolutewall_1_AB_ZY); // デバッグ用メッセージ 絶対値のつもり
 			TextOut(hdc, debugMx2, debugMy +30 , convertStringBuffer, lstrlen(convertStringBuffer));
 
-			bufSeisuu = (int)100 * cosThetaWall1AE_ZY;
+			bufSeisuu = (int)100 * cosThetawall_1_AE_ZY;
 
 			_stprintf_s(convertStringBuffer, 200, TEXT("100 cosθ2: %d"), bufSeisuu); // デバッグ用メッセージ cosθのつもり
 			TextOut(hdc, debugMx2, debugMy +60, convertStringBuffer, lstrlen(convertStringBuffer));
 
 
-			bufSeisuu = (int)100 * ThetaWall1AE_ZY;
+			bufSeisuu = (int)100 * Thetawall_1_AE_ZY;
 			_stprintf_s(convertStringBuffer, 200, TEXT("100 θ2: %d"), (int)bufSeisuu); // デバッグ用メッセージ 角度θのつもり
 			TextOut(hdc, debugMx2, debugMy + 90, convertStringBuffer, lstrlen(convertStringBuffer));
 
@@ -550,8 +550,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			//上面図
 			//被写体の上面図
 						
-			MoveToEx(hdc, wall1startLineX, wall1startLineZ, NULL);
-			LineTo(hdc, wall1endLineX, wall1endLineZ);
+			MoveToEx(hdc, wall_1_startLineX, wall_1_startLineZ, NULL);
+			LineTo(hdc, wall_1_endLineX, wall_1_endLineZ);
 
 
 

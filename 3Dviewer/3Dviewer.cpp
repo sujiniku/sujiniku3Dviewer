@@ -79,11 +79,21 @@ int arrow_rot_centerX = arrow_center_X;
 int arrow_rot_centerZ = arrow_center_Z;
 
 
-int startLineX = 280; int startLineZ=80;
-int endLineX = 320; int endLineZ=80;
+int wall1startLineX = 280; int wall1startLineZ=80;
+int wall1endLineX = 320; int wall1endLineZ=80;
 
-int wallWidth = endLineX- startLineX; // 40
-int wallHeight = 100;
+int wall1Width = wall1endLineX- wall1startLineX; // 40
+int wall1Height = 100;
+
+
+
+int wall2startLineX = 320;
+int wall2endLineX = 320;
+
+int wall2startLineZ = 80;
+int wall2endLineZ = 60;
+int wall2Height = 100;
+
 
 
 int camY = 70; // 視線の高さ
@@ -260,19 +270,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			static TCHAR convertStringBuffer[50]; // 文字列を格納するための変数 convertStringBuffer を準備
 
 
-			int vecCamStartX = startLineX - camX ; int vecCSZ = startLineZ - camZ ; // カメラから起点に向かうベクトルa
-			int vecCamEndX = endLineX - camX ; int vecCEZ = endLineZ - camZ; // カメラから終点に向かうベクトルb
+			int vecCamWall1StartX = wall1startLineX - camX ; int vecCamWall1StartZ = wall1startLineZ - camZ ; // カメラから起点に向かうベクトルa
+			int vecCamWall1EndX = wall1endLineX - camX ; int vecCamWall1EndZ = wall1endLineZ - camZ; // カメラから終点に向かうベクトルb
 
 
 
-			int wallYunder = 0; int wallYtop = wallYunder + wallHeight ; // 高さはY軸にしている。
+			int wall1Yunder = 0; int wall1Ytop = wall1Yunder + wall1Height ; // 高さはY軸にしている。
 
-			int wallZ = startLineZ; // 壁のZ位置は、startLineZで代用した。
+			int wall1Z = wall1startLineZ; // 壁のZ位置は、wall1startLineZで代用した。
 
 
 
-			int vecCamWallUnderZ = wallZ - camZ; int vecCamWallUnderY = wallYunder - camY; // カメラから壁下に向かうベクトル
-			int vecCamWallTopZ = wallZ - camZ; int vecCamWallTopY = wallYtop - camY; // カメラから壁上に向かうベクトル
+			int vecCamWall1UnderZ = wall1Z - camZ; int vecCamWall1UnderY = wall1Yunder - camY; // カメラから壁下に向かうベクトル
+			int vecCamWall1TopZ = wall1Z - camZ; int vecCamWall1TopY = wall1Ytop - camY; // カメラから壁上に向かうベクトル
+
+
+
+
 
 
 			// Y
@@ -280,10 +294,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			TextOut(hdc, 450, 160, convertStringBuffer, lstrlen(convertStringBuffer));
 			
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("壁下Y: %d"), wallYunder); // デバッグ用メッセージ 
+			_stprintf_s(convertStringBuffer, 200, TEXT("壁下Y: %d"), wall1Yunder); // デバッグ用メッセージ 
 			TextOut(hdc, 450, 160+20, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("カメラ → 壁下Y: %d"), vecCamWallUnderY); // デバッグ用メッセージ 
+			_stprintf_s(convertStringBuffer, 200, TEXT("カメラ → 壁下Y: %d"), vecCamWall1UnderY); // デバッグ用メッセージ 
 			TextOut(hdc, 450, 160+20+20, convertStringBuffer, lstrlen(convertStringBuffer));
 
 
@@ -292,10 +306,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			_stprintf_s(convertStringBuffer, 200, TEXT("カメラZ: %d"), camZ); // デバッグ用メッセージ 
 			TextOut(hdc, 650, 160, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("壁Z: %d"), wallZ); // デバッグ用メッセージ 
+			_stprintf_s(convertStringBuffer, 200, TEXT("壁Z: %d"), wall1Z); // デバッグ用メッセージ 
 			TextOut(hdc, 650, 160 + 20, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("カメラ → 壁Z: %d"), vecCamWallUnderZ); // デバッグ用メッセージ 
+			_stprintf_s(convertStringBuffer, 200, TEXT("カメラ → 壁Z: %d"), vecCamWall1UnderZ); // デバッグ用メッセージ 
 			TextOut(hdc, 650, 160 + 20 + 20, convertStringBuffer, lstrlen(convertStringBuffer));
 
 
@@ -303,22 +317,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			// int vec_unitX_x = 1; int vec_unitX_y = 0; // x方向（画面で右側）を向いている単位ベクトルの成分
 
 
-			double InnerAB_XZ = vecCamStartX * vecCamEndX + vecCSZ * vecCEZ ;  // 内積a・b
-			double InnerAE_XZ = vecCamStartX * 1 ;  // 内積a・unitX
-			double InnerEB_XZ = vecCamEndX * 1 ;  // 内積 unitX・b
+			double InnerAB_XZ = vecCamWall1StartX * vecCamWall1EndX + vecCamWall1StartZ * vecCamWall1EndZ ;  // 内積a・b
+			double InnerAE_XZ = vecCamWall1StartX * 1 ;  // 内積a・unitX
+			double InnerEB_XZ = vecCamWall1EndX * 1 ;  // 内積 unitX・b
 
 
 		
 			// int vec_unitY_y = 1; int vec_unitY_z = 0; // y方向（画面からユーザーの向き）を向いている単位ベクトルの成分
 
-			double InnerAB_ZY = vecCamWallUnderZ * vecCamWallTopZ + vecCamWallUnderY * vecCamWallTopY;  // ZY側面の内積a・b
-			double InnerAE_ZY = vecCamWallUnderY * 1 ;  // 内積a・unitY
-			double InnerEB_ZY = vecCamWallTopY * 1 ;  // 内積 unitY・b
+			double InnerAB_ZY = vecCamWall1UnderZ * vecCamWall1TopZ + vecCamWall1UnderY * vecCamWall1TopY;  // ZY側面の内積a・b
+			double InnerAE_ZY = vecCamWall1UnderY * 1 ;  // 内積a・unitY
+			double InnerEB_ZY = vecCamWall1TopY * 1 ;  // 内積 unitY・b
 
 
 
 			double absoluteAB_ZY = sqrt(
-				(vecCamWallUnderZ * vecCamWallUnderZ + vecCamWallUnderY * vecCamWallUnderY) * (vecCamWallTopZ * vecCamWallTopZ + vecCamWallTopY * vecCamWallTopY)
+				(vecCamWall1UnderZ * vecCamWall1UnderZ + vecCamWall1UnderY * vecCamWall1UnderY) * (vecCamWall1TopZ * vecCamWall1TopZ + vecCamWall1TopY * vecCamWall1TopY)
 			); // 絶対値|a| |b|
 
 
@@ -328,28 +342,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 			double absoluteAE_ZY = sqrt(
-				(vecCamWallUnderZ * vecCamWallUnderZ + vecCamWallUnderY * vecCamWallUnderY) * 1
+				(vecCamWall1UnderZ * vecCamWall1UnderZ + vecCamWall1UnderY * vecCamWall1UnderY) * 1
 			); // 絶対値|a| |1|
 
 
 			double absoluteEB_ZY = sqrt(
-				(vecCamWallTopZ * vecCamWallTopZ + vecCamWallTopY * vecCamWallTopY) * 1
+				(vecCamWall1TopZ * vecCamWall1TopZ + vecCamWall1TopY * vecCamWall1TopY) * 1
 			); // 絶対値|b| |1|
 
 
 
 			double absoluteAB_XZ = sqrt (
-							(vecCamStartX * vecCamStartX + vecCSZ * vecCSZ ) * (vecCamEndX * vecCamEndX + vecCEZ * vecCEZ )   
+							(vecCamWall1StartX * vecCamWall1StartX + vecCamWall1StartZ * vecCamWall1StartZ ) * (vecCamWall1EndX * vecCamWall1EndX + vecCamWall1EndZ * vecCamWall1EndZ )   
 							)  ; // 絶対値|a| |b|
 
 
 			double absoluteAE_XZ = sqrt(
-				(vecCamStartX * vecCamStartX + vecCSZ * vecCSZ) * 1
+				(vecCamWall1StartX * vecCamWall1StartX + vecCamWall1StartZ * vecCamWall1StartZ) * 1
 			); // 絶対値|a| |1|
 
 
 			double absoluteEB_XZ = sqrt(
-				(vecCamEndX * vecCamEndX + vecCEZ * vecCEZ) * 1
+				(vecCamWall1EndX * vecCamWall1EndX + vecCamWall1EndZ * vecCamWall1EndZ) * 1
 			); // 絶対値|b| |1|
 
 
@@ -536,8 +550,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			//上面図
 			//被写体の上面図
 						
-			MoveToEx(hdc, startLineX, startLineZ, NULL);
-			LineTo(hdc, endLineX, endLineZ);
+			MoveToEx(hdc, wall1startLineX, wall1startLineZ, NULL);
+			LineTo(hdc, wall1endLineX, wall1endLineZ);
 
 
 
@@ -639,6 +653,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					arrow_rot_centerZ = arrow_center_Z ;
 
 					angleCount = 0;
+					angleAccumulation = 0;
 
 					break;
 				}
@@ -691,6 +706,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				case 'P':
 					now_movetype = moveParallel;
 
+					// angleCount = 0;
+
 					InvalidateRect(hWnd, NULL, TRUE);
 					UpdateWindow(hWnd);
 
@@ -703,11 +720,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 					if (j == 1) {
-						rotBufferXinput1 = arrow_Head_Xrot0;
+						rotBufferXinput1 = arrow_Head_Xrot0; // 回転行列のインプット側に、矢先端の中央の位置を入力
 						rotBufferZinput1 = arrow_Head_Zrot0;
 					}
 					if (j == 2) {
-						rotBufferXinput1 = arrow_Head_RightXrot0;
+						rotBufferXinput1 = arrow_Head_RightXrot0; // 矢先端の右側の位置入力
 						rotBufferZinput1 = arrow_Head_RightZrot0;
 					}
 					if (j == 3) {
@@ -727,7 +744,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 					// 後工程の分岐
 					if (j == 1) {
-						arrow_Head_Xdelta = rotBufferXoutput1;
+						arrow_Head_Xdelta = rotBufferXoutput1; // 回転行列の答えをキャッチ
 						arrow_Head_Zdelta = rotBufferZoutput1;
 
 						arrow_Head_X = (int)(arrow_rot_centerX + arrow_Head_Xdelta);
@@ -737,14 +754,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						arrow_Bottom_Z = (int)(arrow_rot_centerZ - arrow_Head_Zdelta);
 					}
 					if (j == 2) {
-						rotArrowSideRightDefferX = rotBufferXoutput1;
+						rotArrowSideRightDefferX = rotBufferXoutput1; // 回転行列の答えをキャッチ
 						rotArrowSideRightDefferZ = rotBufferZoutput1;
 
 						arrow_Head_RightX = (int)(arrow_rot_centerX + rotArrowSideRightDefferX);
 						arrow_Head_RightZ = (int)(arrow_rot_centerZ + rotArrowSideRightDefferZ);
 					}
 					if (j == 3) {
-						rotArrowSideLeftDefferX = rotBufferXoutput1;
+						rotArrowSideLeftDefferX = rotBufferXoutput1; // 回転行列の答えをキャッチ
 						rotArrowSideLeftDefferZ = rotBufferZoutput1;
 
 						arrow_Head_LeftX = (int)(arrow_rot_centerX + rotArrowSideLeftDefferX);

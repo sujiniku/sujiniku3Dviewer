@@ -18,6 +18,7 @@ int ParallelDefferZ = 0;
 
 double  angleStep = +0.05;
 
+int skipRotFlag = 0;
 
 double rotArrowSideRightDefferX = 0;
 double rotArrowSideRightDefferZ = 0;
@@ -60,8 +61,8 @@ int arrow_Head_LeftXrot0 = 0;
 int arrow_Head_LeftZrot0 = 0;
 
 
-int arrow_Head_Xrot0 = arrow_center_X; // 回転に入る前の位置保存。ケタ落ちの誤差対策のため。矢印の先端のX座標
-int arrow_Head_Zrot0 = arrow_center_Z;
+int arrow_Head_Xrot0 = arrow_Head_X; // 回転に入る前の位置保存。ケタ落ちの誤差対策のため。矢印の先端のX座標
+int arrow_Head_Zrot0 = arrow_Head_Z;
 
 
 double arrow_Head_Xdelta = 0;
@@ -220,11 +221,13 @@ double camYtemp = (double)camY;
 double camZdelta = (double)camY;
 
 
-double angleAccumulation = 0.05;
-int angleCount = 0;
+double deffer_angleAccumulation = 0.05;
+int deffer_angleCount = 0;
 
 
 
+double save_angleAccumulation = 0.05;
+int save_angleCount = 0;
 
 
 
@@ -266,6 +269,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 
 	iCount = 0;
+
 
 
 
@@ -521,9 +525,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 
-				WallObje[iCount].ThetaAE_XZwithCamera = WallObje[iCount].ThetaAE_XZ + angleAccumulation;
+				WallObje[iCount].ThetaAE_XZwithCamera = WallObje[iCount].ThetaAE_XZ + save_angleAccumulation; // これが2周目以降にズレルので要 修正。
 
-				WallObje[iCount].ThetaEB_XZwithCamera = WallObje[iCount].ThetaEB_XZ + angleAccumulation;
+				WallObje[iCount].ThetaEB_XZwithCamera = WallObje[iCount].ThetaEB_XZ + save_angleAccumulation;
 
 
 				float angleAE_Buf1 = cos(WallObje[iCount].ThetaAE_XZwithCamera);
@@ -663,7 +667,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int blackYcentral = blackYstartPoint + ( blackYWidth / 2) ;
 
 
+
+
 			int adjustParam = 3; // 単に、ピンク壁の初期位置での、視界での大きさを調整するための係数。
+
+			int pinkWallXcentral = blackXcentral - adjustParam *10 * deffer_angleCount;
+			int pinkWallYcentral = blackYcentral;
+
+
 
 			HBRUSH brasi_parts_2;
 			brasi_parts_2 = CreateSolidBrush(RGB(255, 100, 100)); // 壁の表示用のピンク色のブラシを作成
@@ -770,6 +781,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 				case 'R':
 				{
+					skipRotFlag = 0;
+
 					ParallelDefferX = 0 ; // 念のため移動量をゼロに設定。
 					ParallelDefferZ = 0 ;
 
@@ -778,21 +791,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 					// arrow_Head_RightXrot0
 
+
 					arrow_Head_Xrot0 = arrow_Head_X;
 					arrow_Head_Zrot0 = arrow_Head_Z;
 
-					arrow_Head_RightXrot0 = arrow_Head_RightX ;
-					arrow_Head_RightZrot0 = arrow_Head_RightZ ;
+					arrow_Head_RightXrot0 = arrow_Head_RightX;
+					arrow_Head_RightZrot0 = arrow_Head_RightZ;
 
 					arrow_Head_LeftXrot0 = arrow_Head_LeftX;
 					arrow_Head_LeftZrot0 = arrow_Head_LeftZ;
 
 
-					arrow_rot_centerX = arrow_center_X ;
-					arrow_rot_centerZ = arrow_center_Z ;
+					arrow_rot_centerX = arrow_center_X;
+					arrow_rot_centerZ = arrow_center_Z;
 
-					angleCount = 0;
-					angleAccumulation = 0;
+
+					save_angleAccumulation = save_angleAccumulation + deffer_angleAccumulation;
+					save_angleCount = save_angleCount + deffer_angleCount;
+
+					deffer_angleCount = 0;
+					deffer_angleAccumulation = 0;
 
 					break;
 				}
@@ -829,23 +847,43 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				case VK_RIGHT:
 					angleStep = +0.05;
 
-					angleCount = angleCount + 1;
-					angleAccumulation = angleCount * angleStep;
+					deffer_angleCount = deffer_angleCount + 1;
+					deffer_angleAccumulation = deffer_angleCount * angleStep;
+
+
+
+					save_angleAccumulation = save_angleAccumulation + angleStep;
+					save_angleCount = save_angleCount + 1;
+
 
 					break;
 
 				case VK_LEFT:
 					angleStep = 0.05;
 
-					angleCount = angleCount - 1;
-					angleAccumulation = angleCount * angleStep;
+					deffer_angleCount = deffer_angleCount - 1;
+					deffer_angleAccumulation = deffer_angleCount * angleStep;
+
+
+
+					save_angleAccumulation = save_angleAccumulation - angleStep;
+					save_angleCount = save_angleCount - 1;
+
+
 
 					break;
 
 				case 'P':
 					now_movetype = moveParallel;
 
-					// angleCount = 0;
+
+
+
+					deffer_angleCount = 0;
+					deffer_angleAccumulation = 0;
+
+
+					skipRotFlag = 1;
 
 					InvalidateRect(hWnd, NULL, TRUE);
 					UpdateWindow(hWnd);
@@ -853,6 +891,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					break;
 				}
 
+				if (skipRotFlag == 1)  break; 
+				else 
 				for (int j = 1; j <= 20; ++j) {
 
 					// ここに共通する前段階の作業を記述;
@@ -878,8 +918,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					}
 
 					// 共通処理
-					rotBufferXoutput1 = cos(angleAccumulation) * (rotBufferXinput1 - arrow_rot_centerX) + (-1) * sin(angleAccumulation) * (rotBufferZinput1 - arrow_rot_centerZ);			
-					rotBufferZoutput1 = sin(angleAccumulation) * (rotBufferXinput1 - arrow_rot_centerX) + cos(angleAccumulation) * (rotBufferZinput1 - arrow_rot_centerZ);
+					rotBufferXoutput1 = cos(deffer_angleAccumulation) * (rotBufferXinput1 - arrow_rot_centerX) + (-1) * sin(deffer_angleAccumulation) * (rotBufferZinput1 - arrow_rot_centerZ);
+					rotBufferZoutput1 = sin(deffer_angleAccumulation) * (rotBufferXinput1 - arrow_rot_centerX) + cos(deffer_angleAccumulation) * (rotBufferZinput1 - arrow_rot_centerZ);
+
+
+
 
 					// 後工程の分岐
 					if (j == 1) {
@@ -914,6 +957,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 					}
 				}// for文の終わり
+
+
 
 				InvalidateRect(hWnd, NULL, TRUE);
 				UpdateWindow(hWnd);

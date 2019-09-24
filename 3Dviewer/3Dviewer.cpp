@@ -112,7 +112,7 @@ struct WallHaveParamDef {
 	int vecCamWall_EndZ; // カメラから終点に向かうベクトルb
 
 
-	//int WallObje[0].vecCamWall_EndX = WallObje[0].endLineX - camX; int WallObje[0].vecCamWall_EndZ = WallObje[0].endLineZ - camZ; // カメラから終点に向かうベクトルb
+	//int WallObje[iCount].vecCamWall_EndX = WallObje[iCount].endLineX - camX; int WallObje[iCount].vecCamWall_EndZ = WallObje[iCount].endLineZ - camZ; // カメラから終点に向かうベクトルb
 
 	int Yunder;
 	int Ytop;
@@ -248,14 +248,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 
 
+	int iCount = 0;
 
 
+	WallObje[iCount].startLineX = 280; WallObje[iCount].startLineZ = 80;
+	WallObje[iCount].endLineX = 320; WallObje[iCount].endLineZ = 80;
 
-	WallObje[0].startLineX = 280; WallObje[0].startLineZ = 80;
-	WallObje[0].endLineX = 320; WallObje[0].endLineZ = 80;
-
-	WallObje[0].Width = WallObje[0].endLineX - WallObje[0].startLineX; // 40
-	WallObje[0].Height = 100;
+	WallObje[iCount].Width = WallObje[iCount].endLineX - WallObje[iCount].startLineX; // 40
+	WallObje[iCount].Height = 100;
 
 
 
@@ -396,155 +396,161 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			static TCHAR convertStringBuffer[50]; // 文字列を格納するための変数 convertStringBuffer を準備
 			
-			WallObje[0].vecCamWall_StartX = WallObje[0].startLineX - camX; 
-			WallObje[0].vecCamWall_StartZ = WallObje[0].startLineZ - camZ; // カメラから起点に向かうベクトルa
-			WallObje[0].vecCamWall_EndX = WallObje[0].endLineX - camX; 
-			WallObje[0].vecCamWall_EndZ = WallObje[0].endLineZ - camZ; // カメラから終点に向かうベクトルb
+			int iCount = 0;
+			for (iCount = 0; iCount < 21; ++iCount) {
 
+				if (iCount == 1) { break; }
+				WallObje[iCount].vecCamWall_StartX = WallObje[iCount].startLineX - camX;
+				WallObje[iCount].vecCamWall_StartZ = WallObje[iCount].startLineZ - camZ; // カメラから起点に向かうベクトルa
+				WallObje[iCount].vecCamWall_EndX = WallObje[iCount].endLineX - camX;
+				WallObje[iCount].vecCamWall_EndZ = WallObje[iCount].endLineZ - camZ; // カメラから終点に向かうベクトルb
 
 
 
-			WallObje[0].Yunder = 0; 
-			WallObje[0].Ytop = WallObje[0].Yunder + WallObje[0].Height ; // 高さはY軸にしている。
 
-			WallObje[0].daihyouZ = WallObje[0].startLineZ; // 壁のZ位置は、WallObje[0].startLineZで代用した。
+				WallObje[iCount].Yunder = 0;
+				WallObje[iCount].Ytop = WallObje[iCount].Yunder + WallObje[iCount].Height; // 高さはY軸にしている。
 
+				WallObje[iCount].daihyouZ = WallObje[iCount].startLineZ; // 壁のZ位置は、WallObje[iCount].startLineZで代用した。
 
 
-			WallObje[0].vecCamUnderZ = WallObje[0].daihyouZ - camZ; 
-			WallObje[0].vecCamUnderY = WallObje[0].Yunder - camY; // カメラから壁下に向かうベクトル
-			WallObje[0].vecCamTopZ = WallObje[0].daihyouZ - camZ; 
-			WallObje[0].vecCamTopY = WallObje[0].Ytop - camY; // カメラから壁上に向かうベクトル
 
+				WallObje[iCount].vecCamUnderZ = WallObje[iCount].daihyouZ - camZ;
+				WallObje[iCount].vecCamUnderY = WallObje[iCount].Yunder - camY; // カメラから壁下に向かうベクトル
+				WallObje[iCount].vecCamTopZ = WallObje[iCount].daihyouZ - camZ;
+				WallObje[iCount].vecCamTopY = WallObje[iCount].Ytop - camY; // カメラから壁上に向かうベクトル
 
 
 
 
 
-			// Y
-			_stprintf_s(convertStringBuffer, 200, TEXT("カメラY: %d"), camY); // デバッグ用メッセージ 
-			TextOut(hdc, 450, 160, convertStringBuffer, lstrlen(convertStringBuffer));
-			
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("壁下Y: %d"), WallObje[0].Yunder); // デバッグ用メッセージ 
-			TextOut(hdc, 450, 160+20, convertStringBuffer, lstrlen(convertStringBuffer));
+				// Y
+				_stprintf_s(convertStringBuffer, 200, TEXT("カメラY: %d"), camY); // デバッグ用メッセージ 
+				TextOut(hdc, 450, 160, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("カメラ → 壁下Y: %d"), WallObje[0].vecCamUnderY); // デバッグ用メッセージ 
-			TextOut(hdc, 450, 160+20+20, convertStringBuffer, lstrlen(convertStringBuffer));
 
+				_stprintf_s(convertStringBuffer, 200, TEXT("壁下Y: %d"), WallObje[iCount].Yunder); // デバッグ用メッセージ 
+				TextOut(hdc, 450, 160 + 20, convertStringBuffer, lstrlen(convertStringBuffer));
 
+				_stprintf_s(convertStringBuffer, 200, TEXT("カメラ → 壁下Y: %d"), WallObje[iCount].vecCamUnderY); // デバッグ用メッセージ 
+				TextOut(hdc, 450, 160 + 20 + 20, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			// Z
-			_stprintf_s(convertStringBuffer, 200, TEXT("カメラZ: %d"), camZ); // デバッグ用メッセージ 
-			TextOut(hdc, 650, 160, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("壁Z: %d"), WallObje[0].daihyouZ); // デバッグ用メッセージ 
-			TextOut(hdc, 650, 160 + 20, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("カメラ → 壁Z: %d"), WallObje[0].vecCamUnderZ); // デバッグ用メッセージ 
-			TextOut(hdc, 650, 160 + 20 + 20, convertStringBuffer, lstrlen(convertStringBuffer));
+				// Z
+				_stprintf_s(convertStringBuffer, 200, TEXT("カメラZ: %d"), camZ); // デバッグ用メッセージ 
+				TextOut(hdc, 650, 160, convertStringBuffer, lstrlen(convertStringBuffer));
 
+				_stprintf_s(convertStringBuffer, 200, TEXT("壁Z: %d"), WallObje[iCount].daihyouZ); // デバッグ用メッセージ 
+				TextOut(hdc, 650, 160 + 20, convertStringBuffer, lstrlen(convertStringBuffer));
 
+				_stprintf_s(convertStringBuffer, 200, TEXT("カメラ → 壁Z: %d"), WallObje[iCount].vecCamUnderZ); // デバッグ用メッセージ 
+				TextOut(hdc, 650, 160 + 20 + 20, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			// int vec_unitX_x = 1; int vec_unitX_y = 0; // x方向（画面で右側）を向いている単位ベクトルの成分
 
-			//vecCamWall_EndX
-			WallObje[0].InnerAB_XZ = WallObje[0].vecCamWall_StartX * WallObje[0].vecCamWall_EndX + WallObje[0].vecCamWall_StartZ * WallObje[0].vecCamWall_EndZ ;  // 内積a・b
-			WallObje[0].InnerAE_XZ = WallObje[0].vecCamWall_StartX * 1 ;  // 内積a・unitX
-			WallObje[0].InnerEB_XZ = WallObje[0].vecCamWall_EndX * 1 ;  // 内積 unitX・b
 
+				// int vec_unitX_x = 1; int vec_unitX_y = 0; // x方向（画面で右側）を向いている単位ベクトルの成分
 
-		
-			// int vec_unitY_y = 1; int vec_unitY_z = 0; // y方向（画面からユーザーの向き）を向いている単位ベクトルの成分
+				//vecCamWall_EndX
+				WallObje[iCount].InnerAB_XZ = WallObje[iCount].vecCamWall_StartX * WallObje[iCount].vecCamWall_EndX + WallObje[iCount].vecCamWall_StartZ * WallObje[iCount].vecCamWall_EndZ;  // 内積a・b
+				WallObje[iCount].InnerAE_XZ = WallObje[iCount].vecCamWall_StartX * 1;  // 内積a・unitX
+				WallObje[iCount].InnerEB_XZ = WallObje[iCount].vecCamWall_EndX * 1;  // 内積 unitX・b
 
-			WallObje[0].InnerAB_ZY = WallObje[0].vecCamUnderZ * WallObje[0].vecCamTopZ + WallObje[0].vecCamUnderY * WallObje[0].vecCamTopY;  // ZY側面の内積a・b
-			WallObje[0].InnerAE_ZY = WallObje[0].vecCamUnderY * 1 ;  // 内積a・unitY
-			WallObje[0].InnerEB_ZY = WallObje[0].vecCamTopY * 1 ;  // 内積 unitY・b
 
 
+				// int vec_unitY_y = 1; int vec_unitY_z = 0; // y方向（画面からユーザーの向き）を向いている単位ベクトルの成分
 
-			WallObje[0].absoluteAB_ZY = sqrt(
-				(WallObje[0].vecCamUnderZ * WallObje[0].vecCamUnderZ + WallObje[0].vecCamUnderY * WallObje[0].vecCamUnderY) * (WallObje[0].vecCamTopZ * WallObje[0].vecCamTopZ + WallObje[0].vecCamTopY * WallObje[0].vecCamTopY)
-			); // 絶対値|a| |b|
+				WallObje[iCount].InnerAB_ZY = WallObje[iCount].vecCamUnderZ * WallObje[iCount].vecCamTopZ + WallObje[iCount].vecCamUnderY * WallObje[iCount].vecCamTopY;  // ZY側面の内積a・b
+				WallObje[iCount].InnerAE_ZY = WallObje[iCount].vecCamUnderY * 1;  // 内積a・unitY
+				WallObje[iCount].InnerEB_ZY = WallObje[iCount].vecCamTopY * 1;  // 内積 unitY・b
 
 
-	//		_stprintf_s(convertStringBuffer, 200, TEXT("%d"), (int)WallObje[0].absoluteAB_ZY); // デバッグ用メッセージ WallObje[0].absoluteAB_ZY のつもり
-	//		TextOut(hdc, 650, 415, convertStringBuffer, lstrlen(convertStringBuffer));
 
+				WallObje[iCount].absoluteAB_ZY = sqrt(
+					(WallObje[iCount].vecCamUnderZ * WallObje[iCount].vecCamUnderZ + WallObje[iCount].vecCamUnderY * WallObje[iCount].vecCamUnderY) * (WallObje[iCount].vecCamTopZ * WallObje[iCount].vecCamTopZ + WallObje[iCount].vecCamTopY * WallObje[iCount].vecCamTopY)
+				); // 絶対値|a| |b|
 
 
-			WallObje[0].absoluteAE_ZY = sqrt(
-				(WallObje[0].vecCamUnderZ * WallObje[0].vecCamUnderZ + WallObje[0].vecCamUnderY * WallObje[0].vecCamUnderY) * 1
-			); // 絶対値|a| |1|
+		//		_stprintf_s(convertStringBuffer, 200, TEXT("%d"), (int)WallObje[iCount].absoluteAB_ZY); // デバッグ用メッセージ WallObje[iCount].absoluteAB_ZY のつもり
+		//		TextOut(hdc, 650, 415, convertStringBuffer, lstrlen(convertStringBuffer));
 
 
-			WallObje[0].absoluteEB_ZY = sqrt(
-				(WallObje[0].vecCamTopZ * WallObje[0].vecCamTopZ + WallObje[0].vecCamTopY * WallObje[0].vecCamTopY) * 1
-			); // 絶対値|b| |1|
 
+				WallObje[iCount].absoluteAE_ZY = sqrt(
+					(WallObje[iCount].vecCamUnderZ * WallObje[iCount].vecCamUnderZ + WallObje[iCount].vecCamUnderY * WallObje[iCount].vecCamUnderY) * 1
+				); // 絶対値|a| |1|
 
 
-			WallObje[0].absoluteAB_XZ = sqrt (
-							(WallObje[0].vecCamWall_StartX * WallObje[0].vecCamWall_StartX + WallObje[0].vecCamWall_StartZ * WallObje[0].vecCamWall_StartZ ) * (WallObje[0].vecCamWall_EndX * WallObje[0].vecCamWall_EndX + WallObje[0].vecCamWall_EndZ * WallObje[0].vecCamWall_EndZ )   
-							)  ; // 絶対値|a| |b|
+				WallObje[iCount].absoluteEB_ZY = sqrt(
+					(WallObje[iCount].vecCamTopZ * WallObje[iCount].vecCamTopZ + WallObje[iCount].vecCamTopY * WallObje[iCount].vecCamTopY) * 1
+				); // 絶対値|b| |1|
 
 
-			WallObje[0].absoluteAE_XZ = sqrt(
-				(WallObje[0].vecCamWall_StartX * WallObje[0].vecCamWall_StartX + WallObje[0].vecCamWall_StartZ * WallObje[0].vecCamWall_StartZ) * 1
-			); // 絶対値|a| |1|
 
+				WallObje[iCount].absoluteAB_XZ = sqrt(
+					(WallObje[iCount].vecCamWall_StartX * WallObje[iCount].vecCamWall_StartX + WallObje[iCount].vecCamWall_StartZ * WallObje[iCount].vecCamWall_StartZ) * (WallObje[iCount].vecCamWall_EndX * WallObje[iCount].vecCamWall_EndX + WallObje[iCount].vecCamWall_EndZ * WallObje[iCount].vecCamWall_EndZ)
+				); // 絶対値|a| |b|
 
-			WallObje[0].absoluteEB_XZ = sqrt(
-				(WallObje[0].vecCamWall_EndX * WallObje[0].vecCamWall_EndX + WallObje[0].vecCamWall_EndZ * WallObje[0].vecCamWall_EndZ) * 1
-			); // 絶対値|b| |1|
 
+				WallObje[iCount].absoluteAE_XZ = sqrt(
+					(WallObje[iCount].vecCamWall_StartX * WallObje[iCount].vecCamWall_StartX + WallObje[iCount].vecCamWall_StartZ * WallObje[iCount].vecCamWall_StartZ) * 1
+				); // 絶対値|a| |1|
 
-			WallObje[0].cosThetaAB_ZY = WallObje[0].InnerAB_ZY / WallObje[0].absoluteAB_ZY;
-			 WallObje[0].cosThetaAE_ZY = WallObje[0].InnerAE_ZY / WallObje[0].absoluteAE_ZY;
-			 WallObje[0].cosThetaEB_ZY = WallObje[0].InnerEB_ZY / WallObje[0].absoluteEB_ZY;
 
-			 WallObje[0].cosThetaAB_XZ = WallObje[0].InnerAB_XZ / WallObje[0].absoluteAB_XZ   ;
-			 WallObje[0].cosThetaAE_XZ = WallObje[0].InnerAE_XZ / WallObje[0].absoluteAE_XZ  ;
-			 WallObje[0].cosThetaEB_XZ = WallObje[0].InnerEB_XZ / WallObje[0].absoluteEB_XZ ;
+				WallObje[iCount].absoluteEB_XZ = sqrt(
+					(WallObje[iCount].vecCamWall_EndX * WallObje[iCount].vecCamWall_EndX + WallObje[iCount].vecCamWall_EndZ * WallObje[iCount].vecCamWall_EndZ) * 1
+				); // 絶対値|b| |1|
 
 
-			 WallObje[0].ThetaAB_ZY = (float) acos( WallObje[0].cosThetaAB_ZY );
-			 WallObje[0].ThetaAE_ZY = (float) acos( WallObje[0].cosThetaAE_ZY );
-			 WallObje[0].ThetaEB_ZY = (float) acos( WallObje[0].cosThetaEB_ZY );
+				WallObje[iCount].cosThetaAB_ZY = WallObje[iCount].InnerAB_ZY / WallObje[iCount].absoluteAB_ZY;
+				WallObje[iCount].cosThetaAE_ZY = WallObje[iCount].InnerAE_ZY / WallObje[iCount].absoluteAE_ZY;
+				WallObje[iCount].cosThetaEB_ZY = WallObje[iCount].InnerEB_ZY / WallObje[iCount].absoluteEB_ZY;
 
+				WallObje[iCount].cosThetaAB_XZ = WallObje[iCount].InnerAB_XZ / WallObje[iCount].absoluteAB_XZ;
+				WallObje[iCount].cosThetaAE_XZ = WallObje[iCount].InnerAE_XZ / WallObje[iCount].absoluteAE_XZ;
+				WallObje[iCount].cosThetaEB_XZ = WallObje[iCount].InnerEB_XZ / WallObje[iCount].absoluteEB_XZ;
 
-			 WallObje[0].ThetaAB_XZ = (float) acos( WallObje[0].cosThetaAB_XZ ) ;
-			 WallObje[0].ThetaAE_XZ = (float) acos( WallObje[0].cosThetaAE_XZ );
-			 WallObje[0].ThetaEB_XZ = (float) acos( WallObje[0].cosThetaEB_XZ ) ;
 
+				WallObje[iCount].ThetaAB_ZY = (float)acos(WallObje[iCount].cosThetaAB_ZY);
+				WallObje[iCount].ThetaAE_ZY = (float)acos(WallObje[iCount].cosThetaAE_ZY);
+				WallObje[iCount].ThetaEB_ZY = (float)acos(WallObje[iCount].cosThetaEB_ZY);
 
 
+				WallObje[iCount].ThetaAB_XZ = (float)acos(WallObje[iCount].cosThetaAB_XZ);
+				WallObje[iCount].ThetaAE_XZ = (float)acos(WallObje[iCount].cosThetaAE_XZ);
+				WallObje[iCount].ThetaEB_XZ = (float)acos(WallObje[iCount].cosThetaEB_XZ);
 
-			 WallObje[0].ThetaAE_XZwithCamera = WallObje[0].ThetaAE_XZ + angleAccumulation ;
 
-			 WallObje[0].ThetaEB_XZwithCamera = WallObje[0].ThetaEB_XZ + angleAccumulation ;
 
 
-			float angleAE_Buf1 = cos(WallObje[0].ThetaAE_XZwithCamera) ;
-			float angleAE_Buf2 = acos(angleAE_Buf1) ;
+				WallObje[iCount].ThetaAE_XZwithCamera = WallObje[iCount].ThetaAE_XZ + angleAccumulation;
 
+				WallObje[iCount].ThetaEB_XZwithCamera = WallObje[iCount].ThetaEB_XZ + angleAccumulation;
 
-			float angleEB_Buf1 = cos(WallObje[0].ThetaEB_XZwithCamera);
-			float angleEB_Buf2 = acos(angleEB_Buf1);
 
+				float angleAE_Buf1 = cos(WallObje[iCount].ThetaAE_XZwithCamera);
+				float angleAE_Buf2 = acos(angleAE_Buf1);
 
-			 WallObje[0].magnificationAB_XZ = WallObje[0].ThetaAB_XZ / 0.3 ;
-			 WallObje[0].magnificationAB_ZY = WallObje[0].ThetaAB_ZY / 0.3;
 
+				float angleEB_Buf1 = cos(WallObje[iCount].ThetaEB_XZwithCamera);
+				float angleEB_Buf2 = acos(angleEB_Buf1);
 
-			double Pi = 3.141 ;
 
-			 WallObje[0].magnificationAE_XZ = (angleAE_Buf2 - (Pi / 2) ) / 0.1;
-			 WallObje[0].magnificationEB_XZ = (angleEB_Buf2 - (Pi / 2) ) / 0.1 ;
+				WallObje[iCount].magnificationAB_XZ = WallObje[iCount].ThetaAB_XZ / 0.3;
+				WallObje[iCount].magnificationAB_ZY = WallObje[iCount].ThetaAB_ZY / 0.3;
 
-			 WallObje[0].magnificationAE_ZY = (WallObje[0].ThetaAE_ZY - Pi / 2) / 0.1;
-			 WallObje[0].magnificationEB_ZY = (WallObje[0].ThetaEB_ZY - Pi / 2) / 0.1;
 
+				double Pi = 3.141;
+
+				WallObje[iCount].magnificationAE_XZ = (angleAE_Buf2 - (Pi / 2)) / 0.1;
+				WallObje[iCount].magnificationEB_XZ = (angleEB_Buf2 - (Pi / 2)) / 0.1;
+
+				WallObje[iCount].magnificationAE_ZY = (WallObje[iCount].ThetaAE_ZY - Pi / 2) / 0.1;
+				WallObje[iCount].magnificationEB_ZY = (WallObje[iCount].ThetaEB_ZY - Pi / 2) / 0.1;
+
+				if (iCount == 0) { break; }
+			}
 
 			// now_movewhat = moveCamera ;
 
@@ -593,23 +599,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			int debugMx1 = 300 ; int debugMy = 300;
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("内積: %d"), (int)WallObje[0].InnerAB_XZ); // デバッグ用メッセージ 内積のつもり
+			_stprintf_s(convertStringBuffer, 200, TEXT("内積: %d"), (int)WallObje[iCount].InnerAB_XZ); // デバッグ用メッセージ 内積のつもり
 			TextOut(hdc, debugMx1, debugMy, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("絶対値: %d"), (int)WallObje[0].absoluteAB_XZ); // デバッグ用メッセージ 絶対値のつもり
+			_stprintf_s(convertStringBuffer, 200, TEXT("絶対値: %d"), (int)WallObje[iCount].absoluteAB_XZ); // デバッグ用メッセージ 絶対値のつもり
 			TextOut(hdc, debugMx1, debugMy + 30, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			int bufSeisuu = (int)100 * WallObje[0].cosThetaAE_XZ;
+			int bufSeisuu = (int)100 * WallObje[iCount].cosThetaAE_XZ;
 
 			_stprintf_s(convertStringBuffer, 200, TEXT("100 cosθ2: %d"), bufSeisuu); // デバッグ用メッセージ cosθのつもり
 			TextOut(hdc, debugMx1,  debugMy + 60, convertStringBuffer, lstrlen(convertStringBuffer));
 
 
-			bufSeisuu = (int)100 * WallObje[0].ThetaAE_XZ;
+			bufSeisuu = (int)100 * WallObje[iCount].ThetaAE_XZ;
 			_stprintf_s(convertStringBuffer, 200, TEXT("100 θ2: %d"), (int)bufSeisuu); // デバッグ用メッセージ 角度θのつもり
 			TextOut(hdc, debugMx1, debugMy + 90, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			bufSeisuu = (int)100 * WallObje[0].magnificationAE_XZ;
+			bufSeisuu = (int)100 * WallObje[iCount].magnificationAE_XZ;
 			_stprintf_s(convertStringBuffer, 200, TEXT("倍率2: %d"), (int)bufSeisuu); // デバッグ用メッセージ 角度θのつもり
 			TextOut(hdc, debugMx1, debugMy + 120, convertStringBuffer, lstrlen(convertStringBuffer));
 
@@ -619,23 +625,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			// Y軸の拡大率の計算デバッグ用
 			int debugMx2 = 600;
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("内積: %d"), (int)WallObje[0].InnerAB_ZY); // デバッグ用メッセージ 内積のつもり
+			_stprintf_s(convertStringBuffer, 200, TEXT("内積: %d"), (int)WallObje[iCount].InnerAB_ZY); // デバッグ用メッセージ 内積のつもり
 			TextOut(hdc, debugMx2, debugMy, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			_stprintf_s(convertStringBuffer, 200, TEXT("絶対値: %d"), (int)WallObje[0].absoluteAB_ZY); // デバッグ用メッセージ 絶対値のつもり
+			_stprintf_s(convertStringBuffer, 200, TEXT("絶対値: %d"), (int)WallObje[iCount].absoluteAB_ZY); // デバッグ用メッセージ 絶対値のつもり
 			TextOut(hdc, debugMx2, debugMy +30 , convertStringBuffer, lstrlen(convertStringBuffer));
 
-			bufSeisuu = (int)100 * WallObje[0].cosThetaAE_ZY;
+			bufSeisuu = (int)100 * WallObje[iCount].cosThetaAE_ZY;
 
 			_stprintf_s(convertStringBuffer, 200, TEXT("100 cosθ2: %d"), bufSeisuu); // デバッグ用メッセージ cosθのつもり
 			TextOut(hdc, debugMx2, debugMy +60, convertStringBuffer, lstrlen(convertStringBuffer));
 
 
-			bufSeisuu = (int)100 * WallObje[0].ThetaAE_ZY;
+			bufSeisuu = (int)100 * WallObje[iCount].ThetaAE_ZY;
 			_stprintf_s(convertStringBuffer, 200, TEXT("100 θ2: %d"), (int)bufSeisuu); // デバッグ用メッセージ 角度θのつもり
 			TextOut(hdc, debugMx2, debugMy + 90, convertStringBuffer, lstrlen(convertStringBuffer));
 
-			bufSeisuu = (int)100 * WallObje[0].magnificationAE_ZY;
+			bufSeisuu = (int)100 * WallObje[iCount].magnificationAE_ZY;
 			_stprintf_s(convertStringBuffer, 200, TEXT("倍率2: %d"), (int)bufSeisuu); // デバッグ用メッセージ 角度θのつもり
 			TextOut(hdc, debugMx2, debugMy + 120, convertStringBuffer, lstrlen(convertStringBuffer));
 
@@ -666,12 +672,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			brasi_parts_2 = CreateSolidBrush(RGB(255, 100, 100)); // 壁の表示用のピンク色のブラシを作成
 			SelectObject(hdc, brasi_parts_2); // ウィンドウhdcと、さきほど作成したブラシを関連づけ
 			
-			Rectangle(hdc,
-				blackXcentral - adjustParam * WallObje[0].magnificationAE_XZ,
-				blackYcentral - adjustParam * WallObje[0].magnificationAE_ZY,
-				blackXcentral - adjustParam * WallObje[0].magnificationEB_XZ ,
-				blackYcentral - adjustParam * WallObje[0].magnificationEB_ZY ); // 基準の状態
-
+			for (iCount = 0; iCount < 21; ++iCount) {
+				if (iCount == 1) { break; }
+				Rectangle(hdc,
+					blackXcentral - adjustParam * WallObje[iCount].magnificationAE_XZ,
+					blackYcentral - adjustParam * WallObje[iCount].magnificationAE_ZY,
+					blackXcentral - adjustParam * WallObje[iCount].magnificationEB_XZ,
+					blackYcentral - adjustParam * WallObje[iCount].magnificationEB_ZY); // 基準の状態
+			}
 
 			lstrcpy(WordBuffer, TEXT("視界"));
 			TextOut(hdc, 80, 30, WordBuffer, lstrlen(WordBuffer));
@@ -682,9 +690,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			//上面図
 			//被写体の上面図
 						
-			MoveToEx(hdc, WallObje[0].startLineX, WallObje[0].startLineZ, NULL);
-			LineTo(hdc, WallObje[0].endLineX, WallObje[0].endLineZ);
-
+			for (iCount = 0; iCount < 21; ++iCount) {
+				if (iCount == 1) { break; }
+				MoveToEx(hdc, WallObje[iCount].startLineX, WallObje[iCount].startLineZ, NULL);
+				LineTo(hdc, WallObje[iCount].endLineX, WallObje[iCount].endLineZ);
+			}
 
 
 			//カメラの位置と向き。矢印の先端を位置の基準とする。

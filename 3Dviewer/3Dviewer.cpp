@@ -250,7 +250,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	int iCount = 0;
 
-
 	WallObje[iCount].startLineX = 280; WallObje[iCount].startLineZ = 80;
 	WallObje[iCount].endLineX = 320; WallObje[iCount].endLineZ = 80;
 
@@ -258,13 +257,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	WallObje[iCount].Height = 100;
 
 
+	iCount = 1;
+	WallObje[iCount].startLineX = 320; WallObje[iCount].startLineZ = 80;
+	WallObje[iCount].endLineX = 320;	WallObje[iCount].endLineZ = 60;
 
-	int Wall_2_startLineX = 320;
-	int Wall_2_endLineX = 320;
-
-	int Wall_2_startLineZ = 80;
-	int Wall_2_endLineZ = 60;
-	int Wall_2_Height = 100;
+	WallObje[iCount].Height = 100;
 
 
 

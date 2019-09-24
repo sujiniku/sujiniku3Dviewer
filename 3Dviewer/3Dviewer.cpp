@@ -253,7 +253,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	WallObje[iCount].startLineX = 280; WallObje[iCount].startLineZ = 80;
 	WallObje[iCount].endLineX = 320; WallObje[iCount].endLineZ = 80;
 
-	WallObje[iCount].Width = WallObje[iCount].endLineX - WallObje[iCount].startLineX; // 40
+//	WallObje[iCount].Width = WallObje[iCount].endLineX - WallObje[iCount].startLineX; // 40 // 未使用?
 	WallObje[iCount].Height = 100;
 
 
@@ -265,7 +265,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 
 
-
+	iCount = 0;
 
 
 

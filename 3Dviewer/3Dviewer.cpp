@@ -229,6 +229,7 @@ int deffer_angleCount = 0;
 double save_angleAccumulation = 0.05;
 int save_angleCount = 0;
 
+int ModelAmount = 1;
 
 
 // このコード モジュールに含まれる関数の宣言を転送します:
@@ -261,12 +262,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 
 	iCount = 1;
-	WallObje[iCount].startLineX = 320; WallObje[iCount].startLineZ = 80;
-	WallObje[iCount].endLineX = 320;	WallObje[iCount].endLineZ = 60;
+	WallObje[iCount].startLineX = 370; WallObje[iCount].startLineZ = 100;
+	WallObje[iCount].endLineX = 400;	WallObje[iCount].endLineZ = 100;
 
 	WallObje[iCount].Height = 100;
 
-
+	ModelAmount = 2;
 
 	iCount = 0;
 
@@ -400,7 +401,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int iCount = 0;
 			for (iCount = 0; iCount < 21; ++iCount) {
 
-				if (iCount == 1) { break; }
+				if (iCount == ModelAmount) { break; }
 				WallObje[iCount].vecCamWall_StartX = WallObje[iCount].startLineX - camX;
 				WallObje[iCount].vecCamWall_StartZ = WallObje[iCount].startLineZ - camZ; // カメラから起点に向かうベクトルa
 				WallObje[iCount].vecCamWall_EndX = WallObje[iCount].endLineX - camX;
@@ -550,7 +551,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				WallObje[iCount].magnificationAE_ZY = (WallObje[iCount].ThetaAE_ZY - Pi / 2) / 0.1;
 				WallObje[iCount].magnificationEB_ZY = (WallObje[iCount].ThetaEB_ZY - Pi / 2) / 0.1;
 
-				if (iCount == 0) { break; }
 			}
 
 			// now_movewhat = moveCamera ;
@@ -681,7 +681,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SelectObject(hdc, brasi_parts_2); // ウィンドウhdcと、さきほど作成したブラシを関連づけ
 			
 			for (iCount = 0; iCount < 21; ++iCount) {
-				if (iCount == 1) { break; }
+				if (iCount == ModelAmount) { break; }
 				Rectangle(hdc,
 					blackXcentral - adjustParam * WallObje[iCount].magnificationAE_XZ,
 					blackYcentral - adjustParam * WallObje[iCount].magnificationAE_ZY,
@@ -699,7 +699,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			//被写体の上面図
 						
 			for (iCount = 0; iCount < 21; ++iCount) {
-				if (iCount == 1) { break; }
+				if (iCount == ModelAmount) { break; }
 				MoveToEx(hdc, WallObje[iCount].startLineX, WallObje[iCount].startLineZ, NULL);
 				LineTo(hdc, WallObje[iCount].endLineX, WallObje[iCount].endLineZ);
 			}

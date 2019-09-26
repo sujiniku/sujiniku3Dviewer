@@ -88,16 +88,16 @@ arrow_Head_Xdelta // 回転作業時の、移動量を保管するためのバ�
 
 arrow_Bottom_X // 矢の羽のついている側のX座標。なお日本語で「やじり」（鏃、矢尻）と言った場合、先端の刃のついている側のことなので注意。
 
- arrow_Bottom_Xdelta // 上記の矢ボトムの回転作業時の計算用バッファのX座標。
+arrow_Bottom_Xdelta // 上記の矢ボトムの回転作業時の計算用バッファのX座標。
 
 
 // これから書くsLX などは、被写体の壁の計算用。
 
-sLX // スタート・ライン・X
+startLineX // スタート・ライン・X
 
-sLZ // スタート・ライン・Z
+startLineZ // スタート・ライン・Z
 
-eLX // エンド・ライン・X
+endLineX // エンド・ライン・X
 
 camY = 70; // 視線の高さ
 

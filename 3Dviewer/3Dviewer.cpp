@@ -205,6 +205,14 @@ struct WallHaveParamDef {
 	double magnificationAE_ZY ;
 	double magnificationEB_ZY ;
 
+
+	double kijyunX ;
+	double kijyunZ ;
+	double suiheiAngle;
+
+	double	hanteiBackBuffer;
+
+
 };
 
 
@@ -232,6 +240,13 @@ int save_angleCount = 0;
 int ModelAmount = 1;
 
 
+
+
+
+
+
+
+
 // このコード モジュールに含まれる関数の宣言を転送します:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -249,13 +264,24 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     // TODO: ここにコードを挿入してください。
 
 
+	double hisyataiX = 0;
+	double hisyataiZ = 0;
 
+	double suiheiAngle = (hisyataiX - camX) / (hisyataiZ - camZ);
 
 
 	int iCount = 0;
 
 	WallObje[iCount].startLineX = 280; WallObje[iCount].startLineZ = 80;
 	WallObje[iCount].endLineX = 320; WallObje[iCount].endLineZ = 80;
+
+	WallObje[iCount].kijyunX = (WallObje[iCount].startLineX + WallObje[iCount].endLineX)/2;
+	WallObje[iCount].kijyunZ = (WallObje[iCount].startLineZ + WallObje[iCount].startLineZ)/2;
+
+
+
+
+ 
 
 //	WallObje[iCount].Width = WallObje[iCount].endLineX - WallObje[iCount].startLineX; // 40 // 未使用?
 	WallObje[iCount].Height = 100;
@@ -264,6 +290,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	iCount = 1;
 	WallObje[iCount].startLineX = 370; WallObje[iCount].startLineZ = 100;
 	WallObje[iCount].endLineX = 400;	WallObje[iCount].endLineZ = 100;
+
+	WallObje[iCount].kijyunX = (WallObje[iCount].startLineX + WallObje[iCount].endLineX) / 2;
+	WallObje[iCount].kijyunZ = (WallObje[iCount].startLineZ + WallObje[iCount].startLineZ) / 2;
 
 	WallObje[iCount].Height = 100;
 
@@ -406,6 +435,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				WallObje[iCount].vecCamWall_StartZ = WallObje[iCount].startLineZ - camZ; // カメラから起点に向かうベクトルa
 				WallObje[iCount].vecCamWall_EndX = WallObje[iCount].endLineX - camX;
 				WallObje[iCount].vecCamWall_EndZ = WallObje[iCount].endLineZ - camZ; // カメラから終点に向かうベクトルb
+
+
+				double vectorX1KijyunX = WallObje[iCount].kijyunX - camX;
+				double vectorZ1KijyunZ = WallObje[iCount].kijyunZ - camZ ;
+
+				double ookisa = (WallObje[iCount].kijyunX - camX) * (WallObje[iCount].kijyunX - camX) + (WallObje[iCount].kijyunZ - camZ) * (WallObje[iCount].kijyunZ - camZ);
+				double UnitVectorX1KijyunX = (WallObje[iCount].kijyunX - camX) / ookisa ;
+				double UnitVectorZ1KijyunZ = (WallObje[iCount].kijyunZ - camZ) / ookisa ;
+
+
+
+				WallObje[iCount].hanteiBackBuffer = UnitVectorX1KijyunX * cos((save_angleAccumulation ) + 3.14/2 ) + UnitVectorZ1KijyunZ * sin((save_angleAccumulation ) + 3.14/2)   ;
 
 
 
@@ -682,11 +723,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			
 			for (iCount = 0; iCount < 21; ++iCount) {
 				if (iCount == ModelAmount) { break; }
+
+				if (WallObje[iCount].hanteiBackBuffer < 0) {
 				Rectangle(hdc,
 					blackXcentral - adjustParam * WallObje[iCount].magnificationAE_XZ,
 					blackYcentral - adjustParam * WallObje[iCount].magnificationAE_ZY,
 					blackXcentral - adjustParam * WallObje[iCount].magnificationEB_XZ,
-					blackYcentral - adjustParam * WallObje[iCount].magnificationEB_ZY); // 基準の状態
+					blackYcentral - adjustParam * WallObje[iCount].magnificationEB_ZY); // 基準の状態			
+				}
 			}
 
 			lstrcpy(WordBuffer, TEXT("視界"));

@@ -446,7 +446,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 
-				WallObje[iCount].hanteiBackBuffer = UnitVectorX1KijyunX * cos((save_angleAccumulation ) + 3.14/2 ) + UnitVectorZ1KijyunZ * sin((save_angleAccumulation ) + 3.14/2)   ;
+				WallObje[iCount].hanteiBackBuffer = UnitVectorX1KijyunX * cos((save_angleAccumulation ) + 3.14/2 ) + UnitVectorZ1KijyunZ * (-1)*sin((save_angleAccumulation ) + 3.14/2)   ;
 
 
 
@@ -724,7 +724,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			for (iCount = 0; iCount < 21; ++iCount) {
 				if (iCount == ModelAmount) { break; }
 
-				if (WallObje[iCount].hanteiBackBuffer < 0) {
+				if (WallObje[iCount].hanteiBackBuffer > 0) {
 				Rectangle(hdc,
 					blackXcentral - adjustParam * WallObje[iCount].magnificationAE_XZ,
 					blackYcentral - adjustParam * WallObje[iCount].magnificationAE_ZY,
